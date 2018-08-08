@@ -18,6 +18,10 @@ import SessionsView from './src/components/SessionsView.js';
 import SpecificTrainer from './src/components/SpecificTrainer.js';
 import ViewClients from './src/components/ViewClients.js';
 import SpecificClient from './src/components/SpecificClient.js';
+import viewMySessionsT from './src/components/viewMySessionsT.js';
+import SpecificSess from './src/components/SpecificSess.js';
+import ViewMyClients from './src/components/ViewMyClients.js';
+import EditInformation from './src/components/EditInformation.js';
 
 
 
@@ -36,6 +40,10 @@ const RootStack = createStackNavigator({
     SpecificTrainer: SpecificTrainer,
     ViewClients: ViewClients,
     SpecificClient: SpecificClient,
+    viewMySessionsT: viewMySessionsT,
+    SpecificSess: SpecificSess,
+    ViewMyClients: ViewMyClients,
+    EditInformation: EditInformation,
     
 
 },
