@@ -17,51 +17,37 @@ export default class ViewTrainers extends React.Component {
     render(){
         const { navigation } = this.props;
         const trainer = navigation.getParam('selectedTrainer', 'NO-ID');
-        var listOfTrainers = [];
-        listOfTrainers = navigation.getParam('trainersToSend', 'NO-ID');
-        
-    
-        for (let i = 0; i < listOfTrainers.length; i++){
-            if(listOfTrainers[i].Netpass == trainer){
-                trainerToDisplay = listOfTrainers[i];
-            }
-        }
-        console.log(trainerToDisplay);
+
         return(
             
             <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              <ScrollView>
             <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Netpass Username: </Text>
+                <Text style={styles.infoLabel}> Netpass Username: {trainer.Netpass}</Text>
             
-                <Text style={styles.info}> {trainerToDisplay.Netpass} </Text>
             </View>
         
             <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> First Name: </Text>
-          
-                <Text style={styles.info}> {trainerToDisplay.Firstname} </Text>
+                <Text style={styles.infoLabel}> First Name: {trainer.Firstname}</Text>
+     
             </View>
             
             <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Last Name: </Text>
-           
-                <Text style={styles.info}> {trainerToDisplay.Lastname} </Text>
+                <Text style={styles.infoLabel}> Last Name:{trainer.Lastname}</Text>
+        
             </View>
         
             <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Email: </Text>
-            
-                <Text style={styles.info}> {trainerToDisplay.Email} </Text>
+                <Text style={styles.infoLabel}> Email: {trainer.Email}</Text>
+
             </View>
             
             <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Password: </Text>
-           
-                <Text style={styles.info}> {trainerToDisplay.Password} </Text>
+                <Text style={styles.infoLabel}> Password: {trainer.Password}</Text>
+
             </View>
             <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-            <TouchableOpacity onPress ={() => this._onClick()}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('EditInformation',{type:'trainer',trainerInfo: trainer})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Edit Information</Text></Text>
             </View>

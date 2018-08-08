@@ -72,7 +72,17 @@ export default class ConfirmationPage extends React.Component {
         const { navigation } = this.props;
         const UserInfo = navigation.getParam('UserInfo', 'NO-ID');
         const type = navigation.getParam('type', 'NO-ID');
-
+        var clientExtra;
+        if(type == 'Client'){
+            clientExtra = 
+                <View style={styles.containerRow}>
+                
+            
+                    <Text style={styles.infoLabel}> Sessions Remaining: </Text>
+                    
+                    <Text style={styles.info}> {UserInfo.NumberOfSessions}  </Text>
+                </View>
+        }
     return (
          <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
@@ -111,15 +121,7 @@ export default class ConfirmationPage extends React.Component {
            
                 <Text style={styles.info}> {UserInfo.Password} </Text>
             </View>
-            if(type === 'Client'){
-        
-                <View style={styles.containerRow}>
-                
-            
-                    <Text style={styles.infoLabel}> Sessions Remaining: </Text>
-                    
-                    <Text style={styles.info}> {UserInfo.NumberOfSessions}  </Text>
-                </View>
+             {clientExtra}
         
                 
                 

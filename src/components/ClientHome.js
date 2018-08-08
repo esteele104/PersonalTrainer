@@ -12,12 +12,15 @@ export default class ClientHome extends React.Component {
         super(props);
         
         this.state = {
-            clientsToDisplay : [],
+            sessions : [],
+            clientSes: [],
         }
          }
      async componentDidMount() {
+          const { navigation } = this.props;
+        const netpass = navigation.getParam('inNetpass', 'NO-ID');
         try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getSessions.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -25,44 +28,38 @@ export default class ClientHome extends React.Component {
                 },
             });
             //console.log(response);
-            let rJSON = await response.json();
+           let rJSON = await response.json();
             for (let i =0; i<rJSON.length; i++){
-                clients.push(rJSON[i])
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
             }
-            for (let i =0; i<clients.length; i++){
-                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
-                a[i] = clients[i];
-                this.setState({clientsToDisplay: a});
+            
+           
+        for (let i =0; i<this.state.sessions.length; i++){
+                if(this.state.sessions[i].AssignedTo == netpass){
+        
+                    let a = this.state.clientSes.slice(); //creates the clone of the state
+                    a[i] = this.state.sessions[i];
+                    this.setState({clientSes: a});
+                }
             }
         
             
     }catch(error){
             console.log(error);
         }
+         
     }
     
     render(){
-        const { navigation } = this.props;
-        const netpass = navigation.getParam('inNetpass', 'NO-ID');
-        for (let i =0; i<this.state.clientsToDisplay.length; i++){
-                if(this.state.clientsToDisplay[i].Netpass == netpass){
         
-                    clientToSend = this.state.clientsToDisplay[i];
-                }
-            }
-            console.log(clientToSend);
         return(
         <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
-            
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionSignUp',{client:clientToSend})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}>Sign up for a session</Text>
-            </View>
-            </TouchableOpacity>
 
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView')}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView',{sess: this.state.clientSes})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Sessions</Text>
             </View>

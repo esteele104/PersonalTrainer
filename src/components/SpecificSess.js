@@ -5,9 +5,9 @@ import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
 
-var clientToDisplay;
+var trainerToDisplay;
 
-export default class SpecificClient extends React.Component {
+export default class SpecificSess extends React.Component {
         constructor(props)
     {
         super();
@@ -16,51 +16,40 @@ export default class SpecificClient extends React.Component {
     
     render(){
         const { navigation } = this.props;
-        const client = navigation.getParam('selectedClient', 'NO-ID');
+        const session = navigation.getParam('selectedSess', 'NO-ID');
+        var listOfSessions = [];
+        listOfSessions = navigation.getParam('SessionsToSend', 'NO-ID');
         
         return(
+             <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white'}}>
             
-            <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-             <ScrollView>
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Netpass Username: {client.Netpass}</Text>
-            </View>
-        
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> First Name:{client.Firstname} </Text>
-          
+            <View>
+                <Text style={styles.infoLabel}> Client Firstname: {session.ClientFirstName}</Text>
             </View>
             
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Last Name: {client.Lastname}</Text>
-           
-            </View>
-        
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Email:{client.Email} </Text>
+            <View >
+                <Text style={styles.infoLabel}> Client Lastname: {session.ClientLastName}</Text>
             </View>
             
-
-            <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('EditInformation',{type:'client',clientInfo:client})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>Edit Information</Text></Text>
+            <View >
+                <Text style={styles.infoLabel}> Assigned To: {session.AssignedTo}</Text>
             </View>
-            </TouchableOpacity>
-            </View>
-            </ScrollView>
             
-        </View>
-
+            <View >
+                <Text style={styles.infoLabel}> Date & Time: {session.Date}</Text>
+            </View>
+            
+            </View>
         );
     }
 }
+
 
 const styles = StyleSheet.create({
   containerOuter: {
     backgroundColor: 'white',
     flex:1,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column'
   },

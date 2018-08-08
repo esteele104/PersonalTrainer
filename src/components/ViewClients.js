@@ -23,42 +23,18 @@ export default class ViewClients extends React.Component {
                    
     }
     
-    async componentDidMount() {
-        try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
-            //console.log(response);
-            let rJSON = await response.json();
-            for (let i =0; i<rJSON.length; i++){
-                clients.push(rJSON[i])
-            }
-            for (let i =0; i<clients.length; i++){
-                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
-                a[i] = clients[i].Netpass;
-                this.setState({clientsToDisplay: a});
-            }
-            console.log(this.state.clientsToDisplay);
-    }catch(error){
-            console.log(error);
-        }
-    }
-    _onClick(client){
-        console.log(client)
-    }
+    
  
     render()
     {
-         
-        const listItems = this.state.clientsToDisplay.map((client,index) =>
+         const { navigation } = this.props;
+        var clients = [];
+        clients = navigation.getParam('clients', 'NO-ID');
+        const listItems = clients.map((client,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificClient',{selectedClient: client,clientsToSend: clients})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificClient',{selectedClient: client})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{client}</Text></Text>
+            <Text style={styles.buttonText}><Text>{client.Firstname}</Text></Text>
             </View>
             </TouchableOpacity>
                 );

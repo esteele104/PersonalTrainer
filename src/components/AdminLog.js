@@ -125,7 +125,6 @@ export default class AdminLogin extends React.Component {
             const finfo = this._form.getValue();
             const uname = finfo.Netpass;
             const toSendStr = JSON.stringify({uname: uname});
-            console.log(toSendStr);
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/ClientLogin.php',{
                 method: 'POST',
                 headers: {
@@ -188,11 +187,7 @@ export default class AdminLogin extends React.Component {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('CreateAccount',{type:'Client'})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}>New Client</Text>
-            </View>
-            </TouchableOpacity>
+            
 
 
           </View>

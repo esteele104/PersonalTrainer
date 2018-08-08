@@ -4,15 +4,8 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
-var trainers= [];
-var toDisplay = [];
-var input = '';
 
-
-
-
-
-export default class ViewTrainers extends React.Component {
+export default class ViewMyClients extends React.Component {
         constructor(props)
     {
         super();
@@ -23,18 +16,18 @@ export default class ViewTrainers extends React.Component {
                    
     }
     
-
  
     render()
     {
          const { navigation } = this.props;
-        var trainers = [];
-        trainers = navigation.getParam('trainers', 'NO-ID');
-        const listItems = trainers.map((trainer,index) =>
+        var myClients = [];
+        myClients = navigation.getParam('myClients', 'NO-ID');
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificTrainer',{selectedTrainer: trainer})} key={index}>
+        const listItems = myClients.map((client,index) =>
+        
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificClient',{selectedClient: client})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{trainer.Firstname}</Text></Text>
+            <Text style={styles.buttonText}><Text>{client.Firstname}</Text></Text>
             </View>
             </TouchableOpacity>
                 );

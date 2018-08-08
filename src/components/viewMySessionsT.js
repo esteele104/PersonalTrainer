@@ -15,6 +15,7 @@ export default class ViewTrainers extends React.Component {
         const { navigation } = this.props;
         var mySessions = [] ;
         mySessions = navigation.getParam('sess', 'NO-ID');
+        console.log(mySessions);
         
         const listItems = mySessions.map((session,index) =>
         
@@ -25,7 +26,7 @@ export default class ViewTrainers extends React.Component {
             </TouchableOpacity>
                 );
 
-        console.log(mySessions);
+        
         return(
         <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
         
