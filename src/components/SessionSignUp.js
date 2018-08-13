@@ -1,15 +1,21 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, DatePickerIOS, AsyncStorage, NetInfo } from 'react-native';
+import { Icon,View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, DatePickerIOS, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
 const Form = t.form.Form;
-
+var PType = t.enums({
+  Individual: 'Individual',
+  Partner: 'Partner'
+});
 const time = t.struct({
     Date: t.Date,
     StartTime: t.Date,
+    SessionType: PType, 
 });
+
+
 
 var options = {
   fields: {
@@ -29,16 +35,18 @@ var info = {
     Clientlastname: '',
     DateTime: '',
     assignedTo: '',
+    SessionType: '',
     
 };
 
 var clients = [];
 var client = '';
 
-export default class TrainerLogin extends React.Component {
+export default class SessionSignUp extends React.Component {
     constructor(props) {
     super(props);
-    this.state = { text: '' ,clientLastname : '', clientFirstname: '', AssignedTo: '', trainer: '', trainers : [], availTrainers: [], sessions: [],  clientsToDisplay: [], selectedClient: null};
+    this.state = { text: '' ,clientLastname : '', clientFirstname: '', AssignedTo: '', trainer: '', trainers : [], availTrainers: [], sessions: [],  clientsToDisplay: [], selectedClient: null, sType:'Individual', 
+                  };
 
     }
     
@@ -89,8 +97,8 @@ export default class TrainerLogin extends React.Component {
             console.log(error);
         }
     }
+        
             
-
     async _onClick(netpass){
         
         if(this.state.selectedClient != null){
@@ -100,18 +108,141 @@ export default class TrainerLogin extends React.Component {
                     }
                 }
             };
+       
         console.log("client",client);
-;        const finfo = this._form.getValue();
+        const finfo = this._form.getValue();
+        var toSendStrSes;
         if(finfo){
             
             info.Clientfirstname = client.Firstname;
             info.Clientlastname = client.Lastname;
             info.DateTime = finfo.Date;
             info.assignedTo = netpass;
+            info.SessionType = finfo.SessionType;
             
-            const toSendStr = JSON.stringify(info);
+            toSendStrSes = JSON.stringify(info);
             
-            try{
+            if(client.SessionsRemaining != '0' || client.AdditionalSessions != '0'){
+            
+             var sessType = finfo.SessionType;
+            console.log(sessType);
+            if(sessType=='Individual'){
+                var numSess;
+                if(client.PackageType == 'Individual'){
+                    numSess = client.SessionsRemaining;
+                    console.log('before',numSess);
+                    numSess = parseInt(numSess, 10);
+                    numSess--;
+                    console.log('after',numSess);
+                }else if(client.AdditionalPackage != null){
+                    numSess = client.AdditionalSessions;
+                    console.log('before',client.AdditionalSessions);
+                    numSess = parseInt(numSess, 10);
+                    numSess--;
+                     console.log('after',numSess);
+                }else if(client.AdditionalPackage == null){
+                    Alert.alert("Client does not have this package.");
+                }
+                var temp = {
+                     sType: sessType,
+                      sessionsLeft: numSess,
+                      netpass: client.Netpass,
+                };
+                
+                const toSendStr = JSON.stringify(temp);
+                console.log(toSendStr);
+                if(numSess >= 0){
+                try{
+                 
+                let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/updateSessionsLeft.php',{
+                   method: 'POST',
+                   headers: {
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                   },
+                    body: toSendStr,
+                });
+                
+                let rJSON = await response.json();
+                 console.log(rJSON["submitted"]);
+                  if(rJSON["submitted"]==="true"){
+                    console.log("yes"); 
+                      this.props.navigation.navigate('TrainerH');
+                      this._addSession(toSendStrSes);
+                  } else{
+                        Alert.alert(rJSON["message"]);
+                    }
+     }  catch(error){
+                console.log(error);
+            }
+                }else{
+                    Alert.alert("This client does not have any individual sessions left!");
+                }
+                
+            }
+            else if(sessType=='Partner'){
+                var numSess;
+                if(client.PackageType == 'Partner'){
+                    numSess = client.SessionsRemaining;
+                    console.log('before',numSess);
+                    numSess = parseInt(numSess, 10);
+                    numSess--;
+                    console.log('sfter',numSess);
+                }else if(client.AdditionalPackage != null){
+                    numSess = client.AdditionalSessions;
+                    console.log('before',numSess);
+                    numSess = parseInt(numSess, 10);
+                     console.log('after',numSess);
+                    numSess--;
+                }else if(client.AdditionalPackage == null){
+                    Alert.alert("Client does not have this package.");
+                }
+                var temp = {
+                     sType: sessType,
+                      sessionsLeft: numSess,
+                      netpass: client.Netpass,
+                };
+                
+                const toSendStr = JSON.stringify(temp);
+                console.log(toSendStr);
+                if(numSess > 0){
+                try{
+                 
+                let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/updateSessionsLeft.php',{
+                   method: 'POST',
+                   headers: {
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                   },
+                    body: toSendStr,
+                });
+                
+                let rJSON = await response.json();
+                 console.log(rJSON["submitted"]);
+                  if(rJSON["submitted"]==="true"){
+                    console.log("yes"); 
+                      this._addSession(toSendStrSes);
+                      this.props.navigation.navigate('TrainerH');
+                  } else{
+                        Alert.alert(rJSON["message"]);
+                    }
+     }  catch(error){
+                console.log(error);
+            }
+                }else{
+                    Alert.alert("Client does not have any more Partner sessions left.");
+                }
+            }
+            
+        
+                 }
+        }else {
+            Alert.alert("Client does not have any more sessions left.");
+        }
+    }
+    async _addSession(toSendStr){
+        console.log("tosend",toSendStr);
+        try{
                  
                 let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/addSession.php',{
                    method: 'POST',
@@ -133,9 +264,6 @@ export default class TrainerLogin extends React.Component {
      }  catch(error){
                 console.log(error);
             }
-            
-        
-                 }
     }
 
 loadClients() {
@@ -151,7 +279,9 @@ loadClients() {
         const netpass = navigation.getParam('inNetpass', 'NO-ID');
 
          return(
-            <View style={styles.containerRow}>
+             <ScrollView>
+            <View>
+             <Text style = {styles.title}> Client </Text>
              <Picker
                 selectedValue={this.state.selectedClient}
                 onValueChange={(itemValue, itemIndex) => 
@@ -173,6 +303,7 @@ loadClients() {
             </TouchableOpacity>
     
             </View>
+            </ScrollView>
          );
      }
 }
@@ -188,9 +319,8 @@ const styles = StyleSheet.create({
     //flex: 1
   },
   title: {
-    fontSize: 30,
+    fontSize: 20,
     alignSelf: 'center',
-    marginBottom: 30
   },
   buttonText: {
     fontSize: 18,

@@ -44,8 +44,9 @@ export default class TrainerHome extends React.Component {
          }catch(error){
             console.log(error);
         }
+         console.log("mytrainer",trainer);
          try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getSessions.php',{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -69,6 +70,7 @@ export default class TrainerHome extends React.Component {
                     this.setState({clientSes: a});
                 }
             }
+             console.log("mysess",this.state.clientSes);
         
             
     }catch(error){
@@ -93,12 +95,7 @@ export default class TrainerHome extends React.Component {
                 this.setState({clientsToDisplay: a});
             }
             
-            for (let i =0; i<this.state.clientsToDisplay.length; i++){
-                if(this.state.clientsToDisplay[i].Netpass == netpass){
-        
-                    clientToSend = this.state.clientsToDisplay[i];
-                }
-            }
+          
             for (let i =0; i<this.state.sessions.length; i++){
                 for(let j =0; j<this.state.clientsToDisplay.length; j++){
                 if(this.state.clientsToDisplay[j].Firstname== this.state.sessions[i].ClientFirstName && this.state.clientsToDisplay[j].Lastname == this.state.sessions[i].ClientLastName && this.state.sessions[i].AssignedTo == netpass){
@@ -131,13 +128,13 @@ export default class TrainerHome extends React.Component {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewMySessionsT',{inNetpass:netpass, sess: this.state.clientSes})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewMySessionsT',{inNetpass:netpass, sess: this.state.clientSes,clients:this.state.clientsToSend})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Sessions</Text>
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('')}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewHours',{hours:this.state.clientSes.length})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Hours</Text>
             </View>

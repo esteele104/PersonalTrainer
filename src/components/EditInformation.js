@@ -22,11 +22,6 @@ var affiliation = t.enums({
   Student: 'Student'
 });
 
-var numSessions = t.enums({
-  4: '4',
-  7: '7',
-  10: '10',
-});
 
     const client = t.struct({
       Netpass: t.String,
@@ -37,7 +32,9 @@ var numSessions = t.enums({
       Gender: Gender,
       SchoolAffiliation: affiliation, 
       PackageType: PType,
-      SessionsRemaining: numSessions,
+      SessionsRemaining: t.Number,
+      AdditionalPackage: PType,
+      AdditionalSessions: t.Number,
       
       
     });
@@ -66,6 +63,8 @@ export default class EditInformation extends React.Component {
               PackageType: '',
               SchoolAffiliation: '', 
               SessionsRemaining: '',
+              AdditionalPackage:'',
+              AdditionalSessions: '',
             }
         }
                    
@@ -101,6 +100,12 @@ export default class EditInformation extends React.Component {
                 SessionsRemaining: {
                     label: 'Number of Sessions',
                 },
+                AdditionalPackage: {
+                    label: 'Additional Package Type',
+                },
+                AdditionalSessions: {
+                    label: 'Number of Additional Sessions',
+                },
             }
         };
 
@@ -121,10 +126,15 @@ export default class EditInformation extends React.Component {
 
 async _onClick(type){
     const finfo = this._form.getValue();
+    if(finfo.PackageType === finfo.AdditionalPackage){
+        Alert.alert("Additional package type can't be the same as original package type");
+    }else{
+    
         if(finfo){
+            if(type=='trainer'){
     try{
         
-        const toSendStr = JSON.stringify({userInfo:finfo,utype:type}); 
+        const toSendStr = JSON.stringify({userInfo:finfo}); 
         console.log(toSendStr);
         let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/updateInfo.php',{
            method: 'POST',
@@ -146,6 +156,33 @@ async _onClick(type){
                 console.log(error);
             }
 }
+        else if(type=='client'){
+        try{
+        
+        const toSendStr = JSON.stringify({userInfo:finfo}); 
+        console.log(toSendStr);
+        let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/updateClient.php',{
+           method: 'POST',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+           },
+            body: toSendStr,
+        });
+
+        let rJSON = await response.json();
+         console.log(rJSON["submitted"]);
+          if(rJSON["submitted"]==="true"){
+            console.log("yes"); 
+          } else{
+                Alert.alert(rJSON["message"]);
+            }
+     }  catch(error){
+                console.log(error);
+            }
+        }
+        }
+    }
 }
     
  
@@ -173,8 +210,8 @@ async _onClick(type){
                     options = {this.options}
                     value = {this.state.value}
                     ref={c => this._form = c}
-                /> 
-                 );
+                />
+                    );
         }
         
         return(

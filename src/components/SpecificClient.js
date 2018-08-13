@@ -18,6 +18,7 @@ export default class SpecificClient extends React.Component {
         const { navigation } = this.props;
         const client = navigation.getParam('selectedClient', 'NO-ID');
         
+        
         return(
             
             <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>

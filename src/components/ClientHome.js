@@ -14,11 +14,36 @@ export default class ClientHome extends React.Component {
         this.state = {
             sessions : [],
             clientSes: [],
+            selectedClient: [],
         }
          }
      async componentDidMount() {
           const { navigation } = this.props;
         const netpass = navigation.getParam('inNetpass', 'NO-ID');
+         try{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            //console.log(response);
+            let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                clients.push(rJSON[i])
+            }
+            for (let i =0; i<clients.length; i++){
+                if(clients[i].Netpass ==netpass){
+                    this.setState({selectedClient:clients[i]})
+                }   
+            }
+            
+    }catch(error){
+            console.log(error);
+        }
+          const toSendStr = JSON.stringify({Fname: this.state.selectedClient.Firstname,Lname:this.state.selectedClient.Lastname});
+         console.log('ss',toSendStr);
         try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getSessions.php',{
                 method: 'POST',
@@ -26,6 +51,7 @@ export default class ClientHome extends React.Component {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
+                body: toSendStr,
             });
             //console.log(response);
            let rJSON = await response.json();
@@ -35,15 +61,7 @@ export default class ClientHome extends React.Component {
                 this.setState({sessions: a});
             }
             
-           
-        for (let i =0; i<this.state.sessions.length; i++){
-                if(this.state.sessions[i].AssignedTo == netpass){
-        
-                    let a = this.state.clientSes.slice(); //creates the clone of the state
-                    a[i] = this.state.sessions[i];
-                    this.setState({clientSes: a});
-                }
-            }
+            
         
             
     }catch(error){
@@ -53,13 +71,13 @@ export default class ClientHome extends React.Component {
     }
     
     render(){
-        
+        console.log("clients",clients);
         return(
         <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
 
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView',{sess: this.state.clientSes})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView',{sess: this.state.sessions,clients:clients})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Sessions</Text>
             </View>

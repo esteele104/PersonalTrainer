@@ -100,6 +100,12 @@ export default class AdminHome extends React.Component {
             </View>
             </TouchableOpacity>
 
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('Report')}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}>Generate Report</Text>
+            </View>
+            </TouchableOpacity>
+
 
           </View>
         );

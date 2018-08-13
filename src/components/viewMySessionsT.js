@@ -19,7 +19,7 @@ export default class ViewTrainers extends React.Component {
         
         const listItems = mySessions.map((session,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: mySessions})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: mySessions,type:'trainer'})} key={index}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>{session.Date}</Text></Text>
             </View>
