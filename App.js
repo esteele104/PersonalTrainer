@@ -24,6 +24,11 @@ import ViewMyClients from './src/components/ViewMyClients.js';
 import EditInformation from './src/components/EditInformation.js';
 import emailTrainer from './src/components/emailTrainer.js';
 import viewHours from './src/components/viewHours.js';
+import viewAllSessions from './src/components/viewAllSessions.js';
+import EditSession from './src/components/EditSession.js';
+import passwordChange from './src/components/passwordChange.js';
+import assignTrainer from './src/components/assignTrainer.js';
+
 
 
 
@@ -48,7 +53,10 @@ const RootStack = createStackNavigator({
     EditInformation: EditInformation,
     emailTrainer: emailTrainer,
     viewHours: viewHours,
-    
+    viewAllSessions: viewAllSessions,
+    EditSess: EditSession,
+    passwordChange: passwordChange,
+    assignTrainer: assignTrainer,
     
 
 },
