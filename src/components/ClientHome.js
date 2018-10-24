@@ -83,6 +83,12 @@ export default class ClientHome extends React.Component {
             </View>
             </TouchableOpacity>
             
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('passwordChange',{info: this.state.selectedClient, type:'Clients'})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}>Change Password</Text>
+            </View>
+            </TouchableOpacity>
+            
           </View>
         );
     }

@@ -15,7 +15,8 @@ var Gender = t.enums({
 
 var PType = t.enums({
   Individual: 'Individual',
-  Partner: 'Partner'
+  Partner: 'Partner',
+  MBM: 'Mind, Body, Me'
 });
 
 var affiliation = t.enums({

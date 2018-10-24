@@ -11,7 +11,6 @@ var PType = t.enums({
 });
 const time = t.struct({
     Date: t.Date,
-    StartTime: t.Date,
     SessionType: PType, 
 });
 
@@ -23,9 +22,6 @@ var options = {
           mode: 'datetime'
           
       },
-    StartTime: {
-      mode: 'time',      
-    },
   }
 };
 
@@ -36,10 +32,11 @@ var info = {
     DateTime: '',
     assignedTo: '',
     SessionType: '',
+    clientEmail:'',
     
 };
 
-var clients = [];
+
 var client = '';
 
 export default class SessionSignUp extends React.Component {
@@ -54,7 +51,7 @@ export default class SessionSignUp extends React.Component {
         
         
         try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getSessions.php',{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -67,18 +64,26 @@ export default class SessionSignUp extends React.Component {
                 let a = this.state.sessions.slice(); //creates the clone of the state
                 a[i] = rJSON[i];
                 this.setState({sessions: a});
+                
             }
     }
         catch(error){
+            console.log("sess");
             console.log(error);
         }
         try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
+            var clients = [];
+            const { navigation } = this.props;
+            const myInfo = navigation.getParam('myInfo', 'NO-ID');
+            var ID = myInfo.ID;
+            const IDtoSend = JSON.stringify(ID);
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClientsForTrainer.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
+                body:IDtoSend
             });
             //console.log(response);
             let rJSON = await response.json();
@@ -90,16 +95,16 @@ export default class SessionSignUp extends React.Component {
                 a[i] = clients[i];
                 this.setState({clientsToDisplay: a});
             }
-            console.log("here",this.state.clientsToDisplay);
-       
+            console.log("here",clients, IDtoSend);
             
     }catch(error){
             console.log(error);
         }
+
     }
         
             
-    async _onClick(netpass){
+    async _onClick(myInfo){
         
         if(this.state.selectedClient != null){
                 for(let i =0; i<this.state.clientsToDisplay.length; i++){
@@ -109,7 +114,7 @@ export default class SessionSignUp extends React.Component {
                 }
             };
        
-        console.log("client",client);
+        
         const finfo = this._form.getValue();
         var toSendStrSes;
         if(finfo){
@@ -117,10 +122,12 @@ export default class SessionSignUp extends React.Component {
             info.Clientfirstname = client.Firstname;
             info.Clientlastname = client.Lastname;
             info.DateTime = finfo.Date;
-            info.assignedTo = netpass;
+            info.assignedTo = myInfo.Netpass;
             info.SessionType = finfo.SessionType;
+            info.clientEmail = client.Email;
             
             toSendStrSes = JSON.stringify(info);
+            console.log("myInfoFor",toSendStrSes);
             
             if(client.SessionsRemaining != '0' || client.AdditionalSessions != '0'){
             
@@ -241,7 +248,7 @@ export default class SessionSignUp extends React.Component {
         }
     }
     async _addSession(toSendStr){
-        console.log("tosend",toSendStr);
+        console.log("tosend",toSendStr.Netpass);
         try{
                  
                 let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/addSession.php',{
@@ -268,7 +275,7 @@ export default class SessionSignUp extends React.Component {
 
 loadClients() {
   return this.state.clientsToDisplay.map((client,index) => (
-     <Picker.Item label={client.Firstname} value={client.Netpass} key={index} />
+     <Picker.Item label={client.Firstname+" "+client.Lastname} value={client.Netpass} key={index} />
   ))
 }
     
@@ -276,7 +283,8 @@ loadClients() {
         
                 
         const { navigation } = this.props;
-        const netpass = navigation.getParam('inNetpass', 'NO-ID');
+        const myInfo = navigation.getParam('myInfo', 'NO-ID');
+         console.log("trainer info",myInfo);
 
          return(
              <ScrollView>
@@ -296,7 +304,7 @@ loadClients() {
                     
                 />
              
-             <TouchableOpacity onPress ={() => this._onClick(netpass)}>
+             <TouchableOpacity onPress ={() => this._onClick(myInfo)}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>Sign Up</Text>
             </View>

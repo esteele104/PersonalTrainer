@@ -14,6 +14,7 @@ export default class AdminHome extends React.Component {
             type: '',
             clientsToDisplay: [],
             trainersToDisplay: [],
+            sessions: [],
         }
     
          }
@@ -63,7 +64,29 @@ export default class AdminHome extends React.Component {
     }catch(error){
             console.log(error);
         }
+        try{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            //console.log(response);
+           let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
+            }
+        console.log("all",this.state.sessions);
+        
+            
+    }catch(error){
+            console.log(error);
+        }
     }
+    
     
     render(){
         return(
@@ -76,13 +99,13 @@ export default class AdminHome extends React.Component {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('ViewClients', {clients: this.state.clientsToDisplay})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('ViewClients', {clients: this.state.clientsToDisplay, sessions: this.state.sessions})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View All Clients</Text>
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('')}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewAllSessions')}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View All Sessions</Text>
             </View>

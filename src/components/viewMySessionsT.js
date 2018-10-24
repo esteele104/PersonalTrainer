@@ -15,23 +15,27 @@ export default class ViewTrainers extends React.Component {
         const { navigation } = this.props;
         var mySessions = [] ;
         mySessions = navigation.getParam('sess', 'NO-ID');
-        console.log(mySessions);
+        var clients = [] ;
+        clients = navigation.getParam('myClients', 'NO-ID');
+        console.log("clients",clients);
         
         const listItems = mySessions.map((session,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: mySessions,type:'trainer'})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{clients:clients,selectedSess: session,sessionsToSend: mySessions,type:'trainer'})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{session.Date}</Text></Text>
+            <Text style={styles.buttonText}><Text>{session.ClientFirstName} {session.ClientLastName}-{session.Date}</Text></Text>
             </View>
             </TouchableOpacity>
                 );
 
         
         return(
+            <ScrollView>
         <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
         
             {listItems}
             </View>
+            </ScrollView>
         );
     }
 }

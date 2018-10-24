@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
-export default class ViewTrainers extends React.Component {
+export default class viewMySessions extends React.Component {
         constructor(props)
     {
         super();

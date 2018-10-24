@@ -20,8 +20,14 @@ export default class emailTrainer extends React.Component {
         }
                    
     }
-    _onSend(trainer){
-        const to = trainer.Email; // string or array of email addresses
+    _onSend(trainer,client,type){
+        
+        var to;
+        if(type == 'trainer'){
+         to = trainer.Email; // string or array of email addresses
+        }else if(type == 'client'){
+            to = client.email;
+        }
         email(to, {
             // Optional additional arguments
             
@@ -35,6 +41,8 @@ export default class emailTrainer extends React.Component {
     {
         const { navigation } = this.props;
         const trainer = navigation.getParam('trainer', 'NO-ID');
+        const client = navigation.getParam('client', 'NO-ID');
+        const type = navigation.getParam('type', 'NO-ID');
         return(
          <View style = {styles.container}>
             <TextInput style = {styles.input2}
@@ -57,7 +65,7 @@ export default class emailTrainer extends React.Component {
                />
             
             <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-            <TouchableOpacity onPress ={()=>this._onSend(trainer)}>
+            <TouchableOpacity onPress ={()=>this._onSend(trainer,client,type)}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Send Email</Text></Text>
             </View>

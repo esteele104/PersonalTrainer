@@ -27,7 +27,7 @@ export default class ViewMyClients extends React.Component {
         
         <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificClient',{selectedClient: client})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{client.Firstname}</Text></Text>
+            <Text style={styles.buttonText}><Text>{client.Firstname +" "+client.Lastname}</Text></Text>
             </View>
             </TouchableOpacity>
                 );

@@ -4,48 +4,56 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
-var trainers= [];
-var toDisplay = [];
-var input = '';
-
-
-
-
-
-export default class ViewTrainers extends React.Component {
+export default class viewAllSessions extends React.Component {
         constructor(props)
     {
         super();
-        
         this.state = {
-            trainersToDisplay : [],
+             sessions : [],
+             
         }
-                   
+        
+    }
+    async componentDidMount() {
+    try{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            //console.log(response);
+           let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
+            }
+        console.log("all",this.state.sessions);
+        
+            
+    }catch(error){
+            console.log(error);
+        }
     }
     
-
- 
-    render()
-    {
-         const { navigation } = this.props;
-        var trainers = [];
-        trainers = navigation.getParam('trainers', 'NO-ID');
-        const listItems = trainers.map((trainer,index) =>
+    render(){
+         const listItems = this.state.sessions.map((session,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificTrainer',{selectedTrainer: trainer})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: this.state.sessions,type:'Admin'})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{trainer.Firstname+" "+trainer.Lastname}</Text></Text>
+            <Text style={styles.buttonText}><Text>{session.ClientFirstName} {session.ClientLastName}-{session.Date}</Text></Text>
             </View>
             </TouchableOpacity>
                 );
         return(
-        
-            <View style = { styles.container }>
             <ScrollView>
-            {listItems}
-            </ScrollView>
-            </View>
+            <View>
             
+             {listItems}
+            </View>
+            </ScrollView>
         );
     }
 }

@@ -18,6 +18,7 @@ export default class TrainerHome extends React.Component {
              trainerSes: [],
              clientSes: [],
              clientsToSend: [],
+             trainerInfo: '',
              
              
              
@@ -40,6 +41,7 @@ export default class TrainerHome extends React.Component {
             //console.log(response);
            let rJSON = await response.json();
              trainer = rJSON;
+             this.setState({trainerInfo:trainer});
              console.log(rJSON);
          }catch(error){
             console.log(error);
@@ -94,21 +96,33 @@ export default class TrainerHome extends React.Component {
                 a[i] = clients[i];
                 this.setState({clientsToDisplay: a});
             }
+       
             
-          
-            for (let i =0; i<this.state.sessions.length; i++){
-                for(let j =0; j<this.state.clientsToDisplay.length; j++){
-                if(this.state.clientsToDisplay[j].Firstname== this.state.sessions[i].ClientFirstName && this.state.clientsToDisplay[j].Lastname == this.state.sessions[i].ClientLastName && this.state.sessions[i].AssignedTo == netpass){
-                   myClients.push(this.state.clientsToDisplay[j]);
-                }
+    }catch(error){
+            console.log(error);
+        }
+         try{
+            var ID = this.state.trainerInfo.ID;
+            const IDtoSend = JSON.stringify(ID);
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClientsForTrainer.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body:IDtoSend
+            });
+            //console.log(response);
+            let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                myClients.push(rJSON[i])
             }
-            }
-            for(let i =0; i<myClients.length; i++){
-                let a = this.state.clientsToSend.slice(); //creates the clone of the state
+            for (let i =0; i<clients.length; i++){
+                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
                 a[i] = myClients[i];
                 this.setState({clientsToSend: a});
             }
-       
+            console.log("here",clients, IDtoSend);
             
     }catch(error){
             console.log(error);
@@ -122,13 +136,13 @@ export default class TrainerHome extends React.Component {
         return(
         <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
-             <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionSignUp',{client:clientToSend,inNetpass:netpass})}>
+             <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionSignUp',{client:clientToSend,myInfo:this.state.trainerInfo})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>Sign up for a session</Text>
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewMySessionsT',{inNetpass:netpass, sess: this.state.clientSes,clients:this.state.clientsToSend})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewMySessionsT',{inNetpass:netpass, sess: this.state.clientSes,clients:clients})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Sessions</Text>
             </View>
@@ -145,6 +159,13 @@ export default class TrainerHome extends React.Component {
             <Text style={styles.buttonText}>View My Clients</Text>
             </View>
             </TouchableOpacity>
+            
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('passwordChange',{netpass: netpass, type:'Trainers'})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}>Change Password</Text>
+            </View>
+            </TouchableOpacity>
+
             
             
 

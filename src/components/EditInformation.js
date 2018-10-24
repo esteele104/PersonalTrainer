@@ -25,7 +25,6 @@ var affiliation = t.enums({
 
     const client = t.struct({
       Netpass: t.String,
-      Password: t.String,
       Email: t.String,
       Firstname: t.String,
       Lastname: t.String,
@@ -40,7 +39,6 @@ var affiliation = t.enums({
     });
 const trainer = t.struct({
       Netpass: t.String,
-      Password: t.String,
       Email: t.String,
       Firstname: t.String,
       Lastname: t.String,

@@ -32,7 +32,8 @@ export default class ConfirmationPage extends React.Component {
                 let rJSON = await response.json();
                  console.log(rJSON["submitted"]);
                   if(rJSON["submitted"]==="true"){
-                    console.log("yes");   
+                    console.log("yes");  
+                    this.props.navigation.navigate('TrainerH');
                   } else{
                         Alert.alert(rJSON["message"]);
                     }
@@ -55,7 +56,8 @@ export default class ConfirmationPage extends React.Component {
                 let rJSON = await response.json();
                  console.log(rJSON["submitted"]);
                   if(rJSON["submitted"]==="true"){
-                    console.log("yes");   
+                    console.log("yes"); 
+                    this.props.navigation.navigate('AdminH');
                   } else{
                         Alert.alert(rJSON["message"]);
                     }
@@ -63,7 +65,7 @@ export default class ConfirmationPage extends React.Component {
                 console.log(error);
             }                
  }
-         this.props.navigation.navigate('Start');
+         
      }
 
      

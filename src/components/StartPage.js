@@ -21,12 +21,6 @@ export default class StartPage extends React.Component {
              
             <View style={{width: 180}}>
         
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin', {LogType: 'Admin'})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}>Admin</Text>
-            </View>
-            </TouchableOpacity>
-
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin',{LogType:'Trainer'})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>Trainer</Text>
@@ -36,6 +30,12 @@ export default class StartPage extends React.Component {
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin',{LogType:'Client'})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>Client</Text>
+            </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin', {LogType: 'Admin'})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}>Admin</Text>
             </View>
             </TouchableOpacity>
 

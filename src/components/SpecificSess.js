@@ -4,8 +4,12 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
+import email from 'react-native-email';
+
+
 
 var trainerToDisplay;
+var toSend;
 
 export default class SpecificSess extends React.Component {
         constructor(props)
@@ -46,6 +50,7 @@ export default class SpecificSess extends React.Component {
          var clients = [];
          var currClient;
          clients = navigation.getParam('clients', 'NO-ID');
+         console.log("client here:",clients);
          console.log("session here:",session);
          for(let i = 0; i<clients.length; i++){
              if(clients[i].Firstname == session.ClientFirstName && clients[i].Lastname == session.ClientLastName){
@@ -68,6 +73,18 @@ export default class SpecificSess extends React.Component {
            let rJSON = await response.json();
              this.setState({trainer : rJSON});
              console.log(rJSON);
+            
+            var to = currClient.Email;
+            var to2 = this.state.trainer.Email;
+            var body = "Your session for "+session.Date+" has been canceled";
+            
+            email(to, to2,{
+            // Optional additional arguments
+            
+            subject: "Session Canceled",
+            body: body
+        }).catch(console.error);
+                        
          }catch(error){
             console.log(error);
         }
@@ -123,22 +140,35 @@ export default class SpecificSess extends React.Component {
      }  catch(error){
                 console.log(error);
             }
+handleEdit(type,session){
+        if(type == 'client'){
+            Alert.alert("Contact a trainer if you would like to change session information");
+        }
+        else {
+            this.props.navigation.navigate('EditSess', {sessionInfo: session});
+        }
+    }
+        
 
     
+    
+                                           
     render(){
         const { navigation } = this.props;
         const session = navigation.getParam('selectedSess', 'NO-ID');
+        console.log("session",session);
         var listOfSessions = [];
         listOfSessions = navigation.getParam('SessionsToSend', 'NO-ID');
         var type = navigation.getParam('type', 'NO-ID');
         var clientInfo = {
             firstname: session.ClientFirstName,
-            lastname: session.ClientLastName
+            lastname: session.ClientLastName,
+            email: session.ClientEmail,
         };
         var buttonText;
         if(type == 'trainer'){
             buttonText = 'Email Client';
-        }else{
+        }else if(type == 'Client'){
             buttonText = 'Email Trainer';
         }
         
@@ -154,6 +184,10 @@ export default class SpecificSess extends React.Component {
             </View>
             
             <View >
+                <Text style={styles.infoLabel}> Client Email: {session.ClientEmail}</Text>
+            </View>
+            
+            <View >
                 <Text style={styles.infoLabel}> Assigned To: {session.AssignedTo}</Text>
             
             </View>
@@ -165,8 +199,12 @@ export default class SpecificSess extends React.Component {
                 <Text style={styles.infoLabel}> Date & Time: {session.Date}</Text>
             </View>
             
+            <View >
+                <Text style={styles.infoLabel}> Workout: {session.Workout}</Text>
+            </View>
+            
             <View style ={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('emailTrainer',{trainer: this.state.trainer,clinet:clientInfo})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('emailTrainer',{trainer: this.state.trainer,client:clientInfo,type: type})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>{buttonText}</Text></Text>
             </View>
@@ -175,6 +213,12 @@ export default class SpecificSess extends React.Component {
             <TouchableOpacity onPress ={() => this.cancelSess(session)}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Cancel Session</Text></Text>
+            </View>
+             </TouchableOpacity>
+
+            <TouchableOpacity onPress ={() => this.handleEdit(type,session)}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>Edit Session</Text></Text>
             </View>
              </TouchableOpacity>
         
