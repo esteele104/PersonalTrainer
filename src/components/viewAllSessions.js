@@ -1,10 +1,18 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
 export default class viewAllSessions extends React.Component {
+    static navigationOptions = {
+    title: "Scheduled Sessions",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
         constructor(props)
     {
         super();
@@ -13,6 +21,29 @@ export default class viewAllSessions extends React.Component {
              
         }
         
+    }
+    async refresh (){
+        try{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            //console.log(response);
+           let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
+            }
+        console.log("all",this.state.sessions);
+        
+            
+    }catch(error){
+            console.log(error);
+        }
     }
     async componentDidMount() {
     try{
@@ -39,32 +70,37 @@ export default class viewAllSessions extends React.Component {
     }
     
     render(){
+        const { navigation } = this.props;
+        var clients = navigation.getParam('clients', 'NO-ID');
          const listItems = this.state.sessions.map((session,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: this.state.sessions,type:'Admin'})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSess',{selectedSess: session,sessionsToSend: this.state.sessions,type:'Admin',clients: clients})} key={index}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>{session.ClientFirstName} {session.ClientLastName}-{session.Date}</Text></Text>
             </View>
             </TouchableOpacity>
                 );
         return(
-            <ScrollView>
-            <View>
             
-             {listItems}
-            </View>
+            <ScrollView style={styles.container}>
+            {listItems}
             </ScrollView>
+            
+      
+            
         );
     }
 }
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    //marginTop: 50,
-    padding: 20,
-    backgroundColor: '#ffffff',
-    //flex: 1
+    //justifyContent: 'center',
+    paddingTop: 15,
+    //padding: 50,
+    width: 400,
+    height: 1000,
+    alignSelf: 'center'
+    //backgroundColor: '#ffffff',
   },
   title: {
     fontSize: 30,
@@ -77,14 +113,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 50,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
  
     viewHolder:

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -28,12 +28,12 @@ export default class ConfirmationPage extends React.Component {
                    },
                     body: toSendStr,
                 });
-                console.log(response);
+                
                 let rJSON = await response.json();
                  console.log(rJSON["submitted"]);
                   if(rJSON["submitted"]==="true"){
                     console.log("yes");  
-                    this.props.navigation.navigate('TrainerH');
+                    this.props.navigation.navigate('AdminH');
                   } else{
                         Alert.alert(rJSON["message"]);
                     }
@@ -86,56 +86,47 @@ export default class ConfirmationPage extends React.Component {
                 </View>
         }
     return (
-         <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
+        
+         <View>
+            <Text style={styles.title}>Confirmation Page</Text>
              
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Netpass Username: </Text>
+            <View style={styles.container}>
+                <Text style={styles.infoLabel}> Netpass Username: {UserInfo.Netpass}</Text>
             
-                <Text style={styles.info}> {UserInfo.Netpass} </Text>
             </View>
         
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> First Name: </Text>
+            <View style={styles.container}>
+                <Text style={styles.infoLabel}> First Name: {UserInfo.Firstname}</Text>
           
-                <Text style={styles.info}> {UserInfo.Firstname} </Text>
             </View>
             
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Last Name: </Text>
-           
-                <Text style={styles.info}> {UserInfo.Lastname} </Text>
+            <View style={styles.container}>
+                <Text style={styles.infoLabel}> Last Name: {UserInfo.Lastname} </Text>
             </View>
         
-        <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Gender: </Text>
+        <View style={styles.container}>
+                <Text style={styles.infoLabel}> Gender: {UserInfo.Gender} </Text>
            
-                <Text style={styles.info}> {UserInfo.Gender} </Text>
             </View>
         
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Email: </Text>
+            <View style={styles.container}>
+                <Text style={styles.infoLabel}> Email: {UserInfo.Email} </Text>
+             </View>
             
-                <Text style={styles.info}> {UserInfo.Email} </Text>
+            <View style={styles.container}>
+                <Text style={styles.infoLabel}> Password: {UserInfo.Password}</Text>
             </View>
+        
             
-            <View style={styles.containerRow}>
-                <Text style={styles.infoLabel}> Password: </Text>
-           
-                <Text style={styles.info}> {UserInfo.Password} </Text>
-            </View>
              {clientExtra}
         
-                
-                
-            }
             
             <View style={styles.containerCol}>
                     <TouchableOpacity
-                        onPress={() => this._Submit(type,UserInfo)}
-                        style={styles.button}
-                        disabled={false}
-                    >
+                        onPress={() => this._Submit(type,UserInfo)}>
+                        <View style = {styles.button}>
                         <Text style={styles.buttonText}>Submit</Text>
+                        </View>
                     </TouchableOpacity>        
                 </View>
                 
@@ -155,6 +146,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column'
   },
+    container: {
+    //justifyContent: 'lef',
+    marginBottom: 10,
+    //padding: 50,
+    width: 300,
+    height: 50,
+    alignSelf: 'auto'
+    //backgroundColor: '#ffffff',
+  },
   containerRow: {
     backgroundColor: 'rgba(0,0,0,0)',
     flex:1,
@@ -171,26 +171,31 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
       //padding: 20
   },
-  button: {
-    backgroundColor: '#003b71',
-    width: 130,
-    height: 40,
-    //padding: 30,
-    borderRadius: 8,
-  },
   buttonText: {
-    alignSelf: 'center',
+    fontSize: 20,
     color: 'white',
-    fontWeight: 'bold',
-    padding: 10,
+    alignSelf: 'center'
+  },
+  button: {
+    height: 50,
+    width: 200,
+    backgroundColor: '#003b71',
+    borderColor: '#003b71',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+      shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
   title: {
-    //color: 'white',
-    color: '#003b71',
-    //textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 20,
-    padding: 10
+    fontSize: 30,
+    alignSelf: 'center',
+    marginTop: 10
   },
   info: {
     color: '#003b71',
@@ -206,7 +211,7 @@ const styles = StyleSheet.create({
   },
   infoLabel :{
     color: '#003b71',
-    fontSize: 20,
+    fontSize: 25,
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,

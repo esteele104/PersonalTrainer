@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -13,14 +13,50 @@ var input = '';
 
 
 export default class ViewClients extends React.Component {
+    static navigationOptions = {
+    title: "Clients",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
         constructor(props)
     {
         super();
         
         this.state = {
-            clientsToDisplay : [],
+            type: '',
+            clientsToDisplay: [],
+            trainersToDisplay: [],
+            sessions: [],
         }
                    
+    }
+    async componentDidMount() {
+        try{
+            clients = [];
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            //console.log(response);
+            let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                clients.push(rJSON[i])
+            }
+            for (let i =0; i<clients.length; i++){
+                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
+                a[i] = clients[i];
+                this.setState({clientsToDisplay: a});
+            }
+            console.log(this.state.clientsToDisplay);
+    }catch(error){
+            console.log(error);
+        }
     }
     
     
@@ -30,7 +66,7 @@ export default class ViewClients extends React.Component {
          const { navigation } = this.props;
         var clients = [];
         var sessions = [];
-        clients = navigation.getParam('clients', 'NO-ID');
+        clients = this.state.clientsToDisplay;
         sessions = navigation.getParam('sessions','NO-ID');
         const listItems = clients.map((client,index) =>
         
@@ -42,8 +78,10 @@ export default class ViewClients extends React.Component {
                 );
         return(
         
-            <View style = { styles.container }>
-            <ScrollView>
+            <View style >
+            
+            <ScrollView style={styles.container}>
+            
             {listItems}
             </ScrollView>
             </View>
@@ -54,10 +92,10 @@ export default class ViewClients extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    //marginTop: 50,
-    padding: 20,
-    backgroundColor: '#ffffff',
+          marginTop: 20,
+    width: 300,
+    height: 1000,
+    alignSelf: 'center'
     //flex: 1
   },
   title: {
@@ -71,14 +109,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 50,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+      shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
  
     viewHolder:

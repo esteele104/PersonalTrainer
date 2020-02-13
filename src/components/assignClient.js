@@ -4,18 +4,18 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
-var trainers= [];
-var selectedTrainer;
+var clients= [];
+var selectedClient;
 
 
 
-export default class assignTrainer extends React.Component {
+export default class assignClient extends React.Component {
         constructor(props)
     {
         super();
         
         this.state = {
-            trainersToDisplay : [],
+            clientsToDisplay : [],
             selected: '',
             names: [],
         }
@@ -23,7 +23,7 @@ export default class assignTrainer extends React.Component {
     }
     async componentDidMount(){
         try{
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getTrainer.php',{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -33,35 +33,35 @@ export default class assignTrainer extends React.Component {
             //console.log(response);
             let rJSON = await response.json();
             for (let i =0; i<rJSON.length; i++){
-                trainers.push(rJSON[i])
+                clients.push(rJSON[i])
             }
-            for (let i =0; i<trainers.length; i++){
-                let a = this.state.trainersToDisplay.slice(); //creates the clone of the state
-                a[i] = trainers[i];
-                this.setState({trainersToDisplay: a});
+            for (let i =0; i<clients.length; i++){
+                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
+                a[i] = clients[i];
+                this.setState({clientsToDisplay: a});
             }
             
     }catch(error){
             console.log(error);
         }
-        for (let i =0; i<this.state.trainersToDisplay.length; i++){
+        for (let i =0; i<this.state.clientsToDisplay.length; i++){
             let a = this.state.names.slice();
-            a[i] =this.state.trainersToDisplay[i].Firstname;
+            a[i] =this.state.clientsToDisplay[i].Firstname+" "+this.state.clientsToDisplay[i].Lastname;
             this.setState({names: a});
             
         }
     }
 
-async onClick(client){
-    console.log("selected",client);
-    for (let i =0; i<this.state.trainersToDisplay.length; i++){
-        if(this.state.selected == this.state.trainersToDisplay[i].Firstname){
-            selectedTrainer = this.state.trainersToDisplay[i];
+async onClick(trainer){
+    console.log("selected",trainer);
+    for (let i =0; i<this.state.clientsToDisplay.length; i++){
+        if(this.state.selected == (this.state.clientsToDisplay[i].Firstname+" "+this.state.clientsToDisplay[i].Lasrname)){
+            selectedClient = this.state.clientsToDisplay[i];
         }
     }
     var toSend = {
-        TID : selectedTrainer.ID,
-        CID : client.ID   
+        TID : trainer.ID,
+        CID : selectedClient.ID   
     }
     const toSendStr = JSON.stringify(toSend);
     console.log("toSend",toSendStr);
@@ -86,7 +86,7 @@ async onClick(client){
     render()
     {
         const { navigation } = this.props;
-        const client = navigation.getParam('clientInfo', 'NO-ID');
+        const trainer = navigation.getParam('trainerInfo', 'NO-ID');
         return(
         <View> 
             <Picker
@@ -97,7 +97,7 @@ async onClick(client){
         return (< Picker.Item label={item} value={item} key={index} />);
 })}
 </Picker>
-<TouchableOpacity onPress ={() => this.onClick(client) }>
+<TouchableOpacity onPress ={() => this.onClick(trainer) }>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Assign</Text></Text>
             </View>

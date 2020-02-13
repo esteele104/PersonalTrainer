@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -10,6 +10,14 @@ var trainer=  "";
 var myClients = [];
 
 export default class TrainerHome extends React.Component {
+    static navigationOptions = {
+    title: "Trainer Home",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
     constructor(props) {
         super(props);
          this.state = {
@@ -148,13 +156,13 @@ export default class TrainerHome extends React.Component {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewHours',{hours:this.state.clientSes.length})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewHours',{inNetpass:netpass})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Hours</Text>
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('ViewMyClients',{myClients: this.state.clientsToSend})}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('ViewMyClients',{myInfo:this.state.trainerInfo})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View My Clients</Text>
             </View>
@@ -194,13 +202,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 60,
+    width: 280,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   }
 });

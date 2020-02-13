@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
 
-//var trainers = [];
 
 export default class SpecificClient extends React.Component {
         constructor(props)
@@ -15,14 +14,25 @@ export default class SpecificClient extends React.Component {
          this.state = {
             trainer: '',
              trainersToDisplay: [],
+             title:"test",
         }
                    
+    }
+
+    static navigationOptions = {
+    title: "Client Name Here",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
     }
 async componentDidMount(){
     console.log("display", trainers);
     
     const { navigation } = this.props;
     const cInfo = navigation.getParam('selectedClient', 'NO-ID');
+    title = cInfo.ID;
     
     try{
             var trainers = [];
@@ -66,29 +76,43 @@ async componentDidMount(){
         var clients = [];
         clients = navigation.getParam('clients', 'NO-ID');
         const listItems = this.state.trainersToDisplay.map((trainer,index) => 
-            <View>                                              
+            <View style = {{alignItems: 'left'}}key={index}>                                              
             <Text style={styles.infoLabel}>Assigned Trainer {(index+1)+": "}{trainer.Firstname+" "+trainer.Lastname}</Text>
             </View>
            
                 );
-        var admin = <TouchableOpacity>
+        var admin = <Text>
+            
+            </Text>
+
+        if(type == 'admin'){
+            admin = <View style={{alignItems: 'center', paddingTop: 20, justifyContent: 'center' }}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('EditInformation',{type:'client',clientInfo:client})}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}></Text>
+            <Text style={styles.buttonText}><Text>Edit Information</Text></Text>
             </View>
             </TouchableOpacity>
-        if(type == 'admin'){
-         admin = <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView',{sess: sessions,clients:clients})}>
+
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('assignTrainer',{type:'client',clientInfo:client})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>Assign a Trainer</Text></Text>
+            </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('SessionsView',{sess: sessions,clients:clients})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}>View Client's Sessions</Text>
             </View>
             </TouchableOpacity>
+            </View>
+
         }
         
         
         return(
             
-            <View style={{alignItems: 'flex-start',justifyContent: 'row', backgroundColor: 'white', flex: 1 }}>
-             <ScrollView>
+            <View >
+             
             <View style={styles.containerRow}>
                 <Text style={styles.infoLabel}> Netpass Username: {client.Netpass}</Text>
             </View>
@@ -110,28 +134,19 @@ async componentDidMount(){
             <View style={styles.containerRow}>
                 <Text style={styles.infoLabel}> Sessions Left: {client.SessionsRemaining} </Text>
             </View>
+            <View style={styles.containerRow}>
+                <Text style={styles.infoLabel}> Availability: {client.Availability} </Text>
+            </View>
             
            {listItems}
-            
-
-            <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('EditInformation',{type:'client',clientInfo:client})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>Edit Information</Text></Text>
-            </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('assignTrainer',{type:'client',clientInfo:client})}>
-            <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>Assign a Trainer</Text></Text>
-            </View>
-            </TouchableOpacity>
+        
             {admin}
 
-            </View>
-            </ScrollView>
+        
+            
             
         </View>
-
+            
         );
     }
 }
@@ -147,8 +162,8 @@ const styles = StyleSheet.create({
   containerRow: {
     backgroundColor: 'rgba(0,0,0,0)',
     flex:1,
-    //alignItems: 'center',
-    //justifyContent: 'center',
+    alignItems: 'flex-start',
+    //justifyContent: 'left',
     flexDirection: 'row',
     //padding: 10
   },
@@ -160,18 +175,26 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
       //padding: 20
   },
-  button: {
-    backgroundColor: '#003b71',
-    width: 165,
-    height: 40,
-    //padding: 30,
-    borderRadius: 8,
-  },
   buttonText: {
-    alignSelf: 'center',
+    fontSize: 18,
     color: 'white',
-    fontWeight: 'bold',
-    padding: 10,
+    alignSelf: 'center'
+  },
+  button: {
+    height: 60,
+    width: 280,
+    backgroundColor: '#003b71',
+    borderColor: '#003b71',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
   title: {
     //color: 'white',
@@ -200,6 +223,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10,
     fontWeight: 'bold',
+      
   },
   Scroll: {
       //backgroundColor: 'rgba(0,0,0,0)',

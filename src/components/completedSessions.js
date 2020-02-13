@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView } from 'react-native';
+import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
-var myClients= [];
 
-export default class ViewMyClients extends React.Component {
+export default class completedSessions extends React.Component {
     static navigationOptions = {
-    title: "My CLients",
+    title: "Completed Sessions",
      headerTitleStyle: {
             //fontWeight: '300',
             fontSize: 20,
@@ -20,79 +19,65 @@ export default class ViewMyClients extends React.Component {
         super();
         
         this.state = {
-            clientsToDisplay : [],
+             sessions : [],
+             
         }
-                   
+        
     }
-    async componentDidMount(){
-        try{
-            var clients = [];
-            const { navigation } = this.props;
-            const myInfo = navigation.getParam('myInfo', 'NO-ID');
-            var ID = myInfo.ID;
-            const IDtoSend = JSON.stringify(ID);
-            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClientsForTrainer.php',{
+    
+    async componentDidMount() {
+    try{
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getCompletedSessions.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body:IDtoSend
             });
             //console.log(response);
-            let rJSON = await response.json();
+           let rJSON = await response.json();
             for (let i =0; i<rJSON.length; i++){
-                clients.push(rJSON[i])
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
             }
-            for (let i =0; i<clients.length; i++){
-                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
-                a[i] = clients[i];
-                this.setState({clientsToDisplay: a});
-            }
-            
+       
+        
             
     }catch(error){
             console.log(error);
         }
-
     }
     
-    
- 
-    render()
-    {
-         const { navigation } = this.props;
-       
+    render(){
+        const { navigation } = this.props;
+        var clients = navigation.getParam('clients', 'NO-ID');
+         
+         const listItems = this.state.sessions.map((session,index) =>
         
-        const listItems = this.state.clientsToDisplay.map((client,index) =>
-        
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificClient',{selectedClient: client})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificSessC',{selectedSess: session,sessionsToSend: this.state.sessions,type:'Admin',clients: clients})} key={index}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{client.Firstname+" "+client.Lastname}</Text></Text>
+            <Text style={styles.buttonText}><Text>{session.ClientFirstname} {session.ClientLastname}-{session.Date}</Text></Text>
             </View>
             </TouchableOpacity>
                 );
         return(
-        
             <View>
-            
             <ScrollView style={styles.container}>
             {listItems}
             </ScrollView>
             
         </View>
-            
-            
         );
     }
 }
 
 const styles = StyleSheet.create({
- container: {
+  container: {
     //justifyContent: 'center',
-    marginTop: 20,
+    paddingTop: 15,
     //padding: 50,
-    width: 300,
+    width: 400,
     height: 1000,
     alignSelf: 'center'
     //backgroundColor: '#ffffff',
@@ -113,10 +98,10 @@ const styles = StyleSheet.create({
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 20,
+    marginBottom: 10,
     alignSelf: 'stretch',
     justifyContent: 'center',
-      shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowColor: 'rgba(0, 0, 0, .30)',
     shadowOpacity: 0.9,
     //elevation: 6,
     shadowRadius: 3 ,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -13,7 +13,8 @@ var Gender = t.enums({
 
 var PType = t.enums({
   Individual: 'Individual',
-  Partner: 'Partner'
+  Partner: 'Partner',
+  MBM: 'Mind, Body, Me'
 });
 
 var affiliation = t.enums({
@@ -32,8 +33,9 @@ var affiliation = t.enums({
       SchoolAffiliation: affiliation, 
       PackageType: PType,
       SessionsRemaining: t.Number,
-      AdditionalPackage: PType,
-      AdditionalSessions: t.Number,
+      AdditionalPackage: t.maybe(PType),
+      AdditionalSessions: t.maybe(t.Number),
+      Availability: t.maybe(t.String),
       
       
     });
@@ -104,6 +106,9 @@ export default class EditInformation extends React.Component {
                 AdditionalSessions: {
                     label: 'Number of Additional Sessions',
                 },
+                Availability: {
+                    label: 'Availability',
+            }
             }
         };
 
@@ -172,6 +177,7 @@ async _onClick(type){
          console.log(rJSON["submitted"]);
           if(rJSON["submitted"]==="true"){
             console.log("yes"); 
+              this.props.navigation.goBack();
           } else{
                 Alert.alert(rJSON["message"]);
             }
@@ -213,8 +219,9 @@ async _onClick(type){
         }
         
         return(
-           <View style = { styles.container }>
             <ScrollView>
+           <View style = { styles.container }>
+            
             {form1}
             {form2}
             
@@ -223,8 +230,9 @@ async _onClick(type){
             <Text style={styles.buttonText}><Text>Update Info</Text></Text>
             </View>
             </TouchableOpacity>
-            </ScrollView> 
+             
             </View>
+            </ScrollView>
         
         
             
@@ -251,14 +259,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 60,
+    width: 380,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
  
     viewHolder:

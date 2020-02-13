@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -8,6 +8,14 @@ var clients = [];
 var trainers = [];
 
 export default class AdminHome extends React.Component {
+    static navigationOptions = {
+    title: "Admin Home",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
     constructor(props) {
         super(props);
         this.state = {
@@ -20,6 +28,7 @@ export default class AdminHome extends React.Component {
          }
     async componentDidMount() {
         try{
+            clients = [];
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
                 method: 'POST',
                 headers: {
@@ -43,6 +52,7 @@ export default class AdminHome extends React.Component {
         }
         
         try{
+            trainers = [];
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getTrainer.php',{
                 method: 'POST',
                 headers: {
@@ -85,13 +95,16 @@ export default class AdminHome extends React.Component {
     }catch(error){
             console.log(error);
         }
+    
+       
     }
     
     
     render(){
+        const {navigation} = this.props;
+        const netpass = navigation.getParam('inNetpass', 'NO-ID');
         return(
-        <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-             
+        <View style={{alignItems: 'center',justifyContent: 'center', paddingTop: 15 }}>
             
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('TrainersView',{trainers: this.state.trainersToDisplay})}>
             <View style = {styles.button}>
@@ -105,9 +118,15 @@ export default class AdminHome extends React.Component {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewAllSessions')}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('viewAllSessions',{clients: this.state.clientsToDisplay})}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}>View All Sessions</Text>
+            <Text style={styles.buttonText}>View Scheduled Sessions</Text>
+            </View>
+            </TouchableOpacity>
+            
+             <TouchableOpacity onPress ={() => this.props.navigation.navigate('completedSessions',{clients: this.state.clientsToDisplay})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}>View Completed Sessions</Text>
             </View>
             </TouchableOpacity>
             
@@ -154,13 +173,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 60,
+    width: 280,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   }
 });

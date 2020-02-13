@@ -1,8 +1,8 @@
-import React from 'react';
-import { AppRegistry,StyleSheet, Image, Text, View, Button, TouchableOpacity, TextInput, AsyncStorage, Alert, NetInfo} from 'react-native';
-import { createStackNavigator, TabNavigator} from 'react-navigation';
-import {SecureStore} from 'expo';
-import t from 'tcomb-form-native'; 
+
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Text, View, Image } from 'react-native';
+
+import { createStackNavigator } from 'react-navigation';
 
 import StartPage from './src/components/StartPage.js';
 import AdminLogin from './src/components/AdminLog.js';
@@ -28,7 +28,11 @@ import viewAllSessions from './src/components/viewAllSessions.js';
 import EditSession from './src/components/EditSession.js';
 import passwordChange from './src/components/passwordChange.js';
 import assignTrainer from './src/components/assignTrainer.js';
-
+import completedSessions from './src/components/completedSessions.js';
+import SpecificSessC from './src/components/SpecificSessC.js';
+import assignClient from './src/components/assignClient.js';
+import Test from './src/components/test.js';
+ 
 
 
 
@@ -57,16 +61,17 @@ const RootStack = createStackNavigator({
     EditSess: EditSession,
     passwordChange: passwordChange,
     assignTrainer: assignTrainer,
+    completedSessions: completedSessions,
+    SpecificSessC: SpecificSessC,
+    assignClient: assignClient,
+    Test: Test,
     
 
 },
 {
 initialRouteName: 'Start',
 navigationOptions: {
-    headerTitle: <Image
-    source={{uri:'https://careers.insidehighered.com/getasset/3f9fccd3-b35b-45f9-b76e-90dc3972a015/;w=600;h=315'}}
-    style={{ width: 290, height: 40 }}
-  />,
+    
   headerStyle: {
     backgroundColor: '#003b71',
   },

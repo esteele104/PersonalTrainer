@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -45,6 +45,7 @@ export default class TrainerAddition extends React.Component {
     
     render(){
         return(
+            <ScrollView>
             <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
             <View style={{width: 180}}>
@@ -61,6 +62,7 @@ export default class TrainerAddition extends React.Component {
 
         </View>
         </View>
+        </ScrollView>
         );
     }
 }

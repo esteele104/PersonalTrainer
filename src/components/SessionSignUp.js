@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon,View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, DatePickerIOS, AsyncStorage, NetInfo } from 'react-native';
+import { Icon,View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, DatePickerIOS, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -7,7 +7,9 @@ import {SecureStore} from 'expo';
 const Form = t.form.Form;
 var PType = t.enums({
   Individual: 'Individual',
-  Partner: 'Partner'
+  Partner: 'Partner',
+  MBM: 'Mind, Body, Me'
+
 });
 const time = t.struct({
     Date: t.Date,
@@ -40,6 +42,14 @@ var info = {
 var client = '';
 
 export default class SessionSignUp extends React.Component {
+    static navigationOptions = {
+    title: "Sessions Sign-Up",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
     constructor(props) {
     super(props);
     this.state = { text: '' ,clientLastname : '', clientFirstname: '', AssignedTo: '', trainer: '', trainers : [], availTrainers: [], sessions: [],  clientsToDisplay: [], selectedClient: null, sType:'Individual', 
@@ -118,7 +128,7 @@ export default class SessionSignUp extends React.Component {
         const finfo = this._form.getValue();
         var toSendStrSes;
         if(finfo){
-            
+            finfo.Date.setHours((finfo.Date.getHours()%12)-5);
             info.Clientfirstname = client.Firstname;
             info.Clientlastname = client.Lastname;
             info.DateTime = finfo.Date;
@@ -126,6 +136,7 @@ export default class SessionSignUp extends React.Component {
             info.SessionType = finfo.SessionType;
             info.clientEmail = client.Email;
             
+
             toSendStrSes = JSON.stringify(info);
             console.log("myInfoFor",toSendStrSes);
             
@@ -141,13 +152,13 @@ export default class SessionSignUp extends React.Component {
                     numSess = parseInt(numSess, 10);
                     numSess--;
                     console.log('after',numSess);
-                }else if(client.AdditionalPackage != null){
+                }else if(client.AdditionalPackage == 'Individual'){
                     numSess = client.AdditionalSessions;
                     console.log('before',client.AdditionalSessions);
                     numSess = parseInt(numSess, 10);
                     numSess--;
                      console.log('after',numSess);
-                }else if(client.AdditionalPackage == null){
+                }else {
                     Alert.alert("Client does not have this package.");
                 }
                 var temp = {
@@ -195,13 +206,13 @@ export default class SessionSignUp extends React.Component {
                     numSess = parseInt(numSess, 10);
                     numSess--;
                     console.log('sfter',numSess);
-                }else if(client.AdditionalPackage != null){
+                }else if(client.AdditionalPackage == 'Partner'){
                     numSess = client.AdditionalSessions;
                     console.log('before',numSess);
                     numSess = parseInt(numSess, 10);
                      console.log('after',numSess);
                     numSess--;
-                }else if(client.AdditionalPackage == null){
+                }else {
                     Alert.alert("Client does not have this package.");
                 }
                 var temp = {
@@ -239,12 +250,66 @@ export default class SessionSignUp extends React.Component {
                 }else{
                     Alert.alert("Client does not have any more Partner sessions left.");
                 }
+            }else if(sessType=='MBM'){
+                var numSess;
+                if(client.PackageType == 'MBM'){
+                    numSess = client.SessionsRemaining;
+                    console.log('before',numSess);
+                    numSess = parseInt(numSess, 10);
+                    numSess--;
+                    console.log('after',numSess);
+                }else if(client.AdditionalPackage == 'MBM'){
+                    numSess = client.AdditionalSessions;
+                    console.log('before',client.AdditionalSessions);
+                    numSess = parseInt(numSess, 10);
+                    numSess--;
+                     console.log('after',numSess);
+                }else {
+                    Alert.alert("Client does not have this package.");
+                }
+                var temp = {
+                     sType: sessType,
+                      sessionsLeft: numSess,
+                      netpass: client.Netpass,
+                };
+                
+                const toSendStr = JSON.stringify(temp);
+                console.log(toSendStr);
+                if(numSess >= 0){
+                try{
+                 
+                let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/updateSessionsLeft.php',{
+                   method: 'POST',
+                   headers: {
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                   },
+                    body: toSendStr,
+                });
+                
+                let rJSON = await response.json();
+                 console.log(rJSON["submitted"]);
+                  if(rJSON["submitted"]==="true"){
+                    console.log("yes"); 
+                      this.props.navigation.navigate('TrainerH');
+                      this._addSession(toSendStrSes);
+                  } else{
+                        Alert.alert(rJSON["message"]);
+                    }
+     }  catch(error){
+                console.log(error);
+            }
+                }else{
+                    Alert.alert("This client does not have any individual sessions left!");
+                }
+                
             }
             
         
-                 }
+                 
         }else {
             Alert.alert("Client does not have any more sessions left.");
+        }
         }
     }
     async _addSession(toSendStr){
@@ -287,7 +352,7 @@ loadClients() {
          console.log("trainer info",myInfo);
 
          return(
-             <ScrollView>
+             
             <View>
              <Text style = {styles.title}> Client </Text>
              <Picker
@@ -311,7 +376,7 @@ loadClients() {
             </TouchableOpacity>
     
             </View>
-            </ScrollView>
+            
          );
      }
 }

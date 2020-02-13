@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo, ScrollView } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 
 const Form = t.form.Form;
@@ -41,6 +41,7 @@ var numSessions = t.enums({
       SchoolAffiliation: affiliation, 
       PackageType: PType,
       NumberOfSessions: numSessions,
+      Availability: t.maybe(t.String),
       
       
     });
@@ -58,7 +59,25 @@ var UserInfo = {
                 
                   
             }
+var _ = require('lodash');
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet);
+
+stylesheet.textbox.normal.height = 50;
+stylesheet.textbox.normal.fontSize = 25;
+stylesheet.controlLabel.normal.fontSize = 20;
+stylesheet.textbox.error.height = 50;
+stylesheet.textbox.error.fontSize = 25;
+stylesheet.controlLabel.error.fontSize = 20;
+
 export default class TrainerAddition extends React.Component {
+    static navigationOptions = {
+    title: "Client Addition",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
     constructor(props) {
         super(props);
         /*this.state={
@@ -76,6 +95,8 @@ export default class TrainerAddition extends React.Component {
          
     
     options = {
+            stylesheet: stylesheet,
+
             auto: 'placeholders',
             fields: {
                 Netpass: {
@@ -106,6 +127,9 @@ export default class TrainerAddition extends React.Component {
                 NumberOfSessions: {
                     label: 'Number of Sessions',
                 },
+                Availability: {
+                    label: 'Availability',
+            }
             }
         };
 
@@ -135,9 +159,9 @@ export default class TrainerAddition extends React.Component {
         const type = navigation.getParam('type', 'NO-ID');
         return(
             <ScrollView>
-            <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
+            <View style={{alignItems: 'center',justifyContent: 'center',  }}>
              
-            <View style={{width: 180}}>
+            <View style={{width: 300}}>
             <Form 
                     type={User} 
                     options = {this.options}
@@ -150,8 +174,10 @@ export default class TrainerAddition extends React.Component {
             </TouchableOpacity>
 
         </View>
+        
         </View>
-</ScrollView>
+        </ScrollView>
+
         );
     }
 }
@@ -169,19 +195,25 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 30
   },
-  buttonText: {
+ buttonText: {
     fontSize: 18,
     color: 'white',
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 50,
+    width: 300,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
-    borderWidth: 1,
+    //borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center'
+    //alignSelf: 'stretch',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   }
 });

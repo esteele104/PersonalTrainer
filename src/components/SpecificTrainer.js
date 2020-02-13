@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -7,21 +7,90 @@ import {SecureStore} from 'expo';
 
 var trainerToDisplay;
 
-export default class ViewTrainers extends React.Component {
+export default class SpecificTrainer extends React.Component {
         constructor(props)
     {
         super();
+        this.state = {
+            client: '',
+             clientsToDisplay: [],
+        }
                    
     }
+async removeTrainer(){
+    const { navigation } = this.props;
+    const tInfo = navigation.getParam('selectedTrainer', 'NO-ID');
+    try{
+        const IDtoSend = JSON.stringify(tInfo.ID);
+        console.log(IDtoSend);
+        let response = await fetch ('http://ic-research.eastus.cloudapp.azure.com/~esteele/removeTrainer.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body:IDtoSend
+            });
+        let rJSON = await response.json();
+                 console.log(rJSON);
+        if(rJSON["submitted"] === "true"){
+            this.props.navigation.goBack();
+        }
+                  }catch(error){
+            console.log(error);
+        }
+}
+async componentDidMount(){
+    console.log("display", clients);
+    
+    const { navigation } = this.props;
+    const tInfo = navigation.getParam('selectedTrainer', 'NO-ID');
+    
+    try{
+            var clients = [];
+            var TID = tInfo.ID;
+            const IDtoSend = JSON.stringify(TID);
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClientsForTrainer.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body:IDtoSend
+            });
+            
+            let rJSON = await response.json();
+            console.log("response",rJSON);
+            for (let i =0; i<rJSON.length; i++){
+                clients.push(rJSON[i])
+            }
+            for (let i =0; i<clients.length; i++){
+                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
+                a[i] = clients[i];
+                this.setState({clientsToDisplay: a});
+            }
+            console.log("here",this.state.clientsToDisplay);
+       
+            
+    }catch(error){
+            console.log(error);
+        }
+}
     
     render(){
         const { navigation } = this.props;
         const trainer = navigation.getParam('selectedTrainer', 'NO-ID');
+        
+        const listItems = this.state.clientsToDisplay.map((client,index) => 
+            <View style = {styles.containerRow} key={index}>                                              
+            <Text style={styles.infoLabel}>Assigned Client {(index+1)+": "}{client.Firstname+" "+client.Lastname}</Text>
+            </View>
+            );
 
         return(
             
-            <View style={{alignItems: 'flex-start',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
-             <ScrollView>
+            <View style={styles.container}>
+             
             <View style={styles.containerRow}>
                 <Text style={styles.infoLabel}> Netpass Username: {trainer.Netpass}</Text>
             
@@ -46,20 +115,36 @@ export default class ViewTrainers extends React.Component {
                 <Text style={styles.infoLabel}> Password: {trainer.Password}</Text>
 
             </View>
-            <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
+            {listItems}
+            
+        
+            
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('EditInformation',{type:'trainer',trainerInfo: trainer})}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Edit Information</Text></Text>
             </View>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('assignClient',{type:'trainer',trainerInfo:trainer})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>Assign a Client</Text></Text>
             </View>
-            </ScrollView>
-            
-        </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress ={() => this.removeTrainer()}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>Remove Trainer</Text></Text>
+            </View>
+            </TouchableOpacity>
+
+            </View>
+
+    
 
         );
     }
 }
+
 
 const styles = StyleSheet.create({
   containerOuter: {
@@ -71,11 +156,13 @@ const styles = StyleSheet.create({
   },
   containerRow: {
     backgroundColor: 'rgba(0,0,0,0)',
-    flex:1,
+    //flex:2,
     //alignItems: 'center',
     //justifyContent: 'center',
     flexDirection: 'row',
-    //padding: 10
+    marginBottom: 10,
+    //width: 300,
+    //height: 1000,
   },
   containerCol: {
     backgroundColor: 'rgba(0,0,0,0)',
@@ -85,18 +172,27 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
       //padding: 20
   },
-  button: {
-    backgroundColor: '#003b71',
-    width: 130,
-    height: 40,
-    //padding: 30,
-    borderRadius: 8,
-  },
   buttonText: {
-    alignSelf: 'center',
+    fontSize: 20,
     color: 'white',
-    fontWeight: 'bold',
-    padding: 10,
+    alignSelf: 'center'
+  },
+  button: {
+    height: 50,
+    width:300,
+    backgroundColor: '#003b71',
+    borderColor: '#003b71',
+    borderWidth: 1,
+    borderRadius: 8,
+    //marginBottom: 20,
+    marginTop: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
   title: {
     //color: 'white',

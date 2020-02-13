@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -8,7 +8,8 @@ const Form = t.form.Form;
 
 var PType = t.enums({
   Individual: 'Individual',
-  Partner: 'Partner'
+  Partner: 'Partner',
+  MBM: 'Mind, Body, Me',
 });
 
 const session = t.struct({
@@ -19,11 +20,12 @@ const session = t.struct({
       Date: t.maybe(t.Date),
       SessionType: PType,
       
+      
      
 });
 
 var infoToSend = {
-    workout: '',
+    Workout: '',
     ClientFirstName: '',
       ClientLastName: '',
       AssignedTo: '',
@@ -83,7 +85,7 @@ async _onClick(value){
         infoToSend.Date = finfo.Date,
         infoToSend.SessionID = value,
         infoToSend.SessionType = finfo.SessionType,
-        infoToSend.workout = this.state.workout;
+        infoToSend.Workout = this.state.workout;
             
         const toSendStr = JSON.stringify({sessionInfo:infoToSend}); 
         console.log(toSendStr);
@@ -114,43 +116,43 @@ async _onClick(value){
     render(){
          const { navigation } = this.props;
         var Info = navigation.getParam('sessionInfo', 'NO-ID');
+        console.log("this",Info);
+        infoToSend.Workout= Info.Workout;
         var value = {
+    
               ClientFirstName: Info.ClientFirstName,
               ClientLastName: Info.ClientLastName,
                 SessionID: Info.ID,
                 AssignedTo: Info.AssignedTo,
                 SessionType: Info.SessionType,
-                ClientEmail: Info.ClientEmail,   
+                ClientEmail: Info.ClientEmail,
             }
-        infoToSend.workout = Info.Workout;
+        
         return(
-            <ScrollView>
-           <View style = { styles.container }>
-            <Text style = {styles.text}> Workout </Text>
-            <TextInput style = {styles.input}
-              multiline = {true}
-               underlineColorAndroid = "transparent"
-               placeholder = {infoToSend.workout}
-               placeholderTextColor = "#9a73ef"
-               autoCapitalize = "none"
-            onChangeText = {(workout) => this.setState({workout})}
-            
-               />
+            <View>
+            <Text style={styles.text}> Workout </Text>
+            <TextInput
+                multiline = {true}
+                style={{height: 80, borderColor: 'gray', borderWidth: 1}}
+                onChangeText={(text) => this.setState({workout:text})}
+               value={this.state.workout}
+              />
             <Form 
                     type={session} 
                     options={options}
                     value={value}
                     ref={c => this._form = c}
                 />
-            
+                
             <TouchableOpacity onPress ={() => this._onClick(Info.ID)}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Update Info</Text></Text>
             </View>
             </TouchableOpacity>
-            
             </View>
-            </ScrollView>
+            
+            
+            
         
         
             

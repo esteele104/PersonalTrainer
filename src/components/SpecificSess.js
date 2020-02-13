@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -43,9 +43,11 @@ export default class SpecificSess extends React.Component {
          }catch(error){
             console.log(error);
         }
+    
     }
     
     async cancelSess(session){
+        
         const { navigation } = this.props;
          var clients = [];
          var currClient;
@@ -73,17 +75,6 @@ export default class SpecificSess extends React.Component {
            let rJSON = await response.json();
              this.setState({trainer : rJSON});
              console.log(rJSON);
-            
-            var to = currClient.Email;
-            var to2 = this.state.trainer.Email;
-            var body = "Your session for "+session.Date+" has been canceled";
-            
-            email(to, to2,{
-            // Optional additional arguments
-            
-            subject: "Session Canceled",
-            body: body
-        }).catch(console.error);
                         
          }catch(error){
             console.log(error);
@@ -131,7 +122,17 @@ export default class SpecificSess extends React.Component {
                 let rJSON = await response.json();
                  console.log(rJSON["submitted"]);
                   if(rJSON["submitted"]==="true"){
-                    this.props.navigation.navigate('ClientH');
+                       var to = currClient.Email;
+                        var to2 = this.state.trainer.Email;
+                        var body = "Your session for "+session.Date+" has been canceled";
+            
+                        email(to, to2,{
+                        // Optional additional arguments
+
+                        subject: "Session Canceled",
+                        body: body
+                    }).catch(console.error);
+                    this.props.navigation.goBack();
                     console.log("yes"); 
         
                   } else{
@@ -148,6 +149,51 @@ handleEdit(type,session){
             this.props.navigation.navigate('EditSess', {sessionInfo: session});
         }
     }
+async complete(session){
+   
+        try{
+             const toSendStr = JSON.stringify(session);
+             console.log("here",toSendStr);
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/addCompletedSession.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: toSendStr
+            });
+            //console.log(response);
+           let rJSON = await response.json();
+            console.log(rJSON["submitted"]);
+                  if(rJSON["submitted"]==="true"){
+                    console.log("yes"); 
+                    try{
+             const toSendStr2 = JSON.stringify({ID: session.ID});
+             console.log(toSendStr);
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/deleteSession.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: toSendStr2
+            });
+            //console.log(response);
+           let rJSON = await response.json();
+             console.log(rJSON);
+            this.props.navigation.navigate('TrainerH');
+         }catch(error){
+            console.log(error);
+        }  
+                  } else{
+                        Alert.alert(rJSON["message"]);
+                    }
+                        
+         }catch(error){
+            console.log(error);
+        }
+    
+}
         
 
     
@@ -156,8 +202,14 @@ handleEdit(type,session){
     render(){
         const { navigation } = this.props;
         const session = navigation.getParam('selectedSess', 'NO-ID');
-        console.log("session",session);
+        console.log("session",String(session.Date).split('T'));
         var listOfSessions = [];
+        var date = String(session.Date).split('T');
+        var time = String(date[1]).split('.');
+        time = time[0];
+        time = time.split(':');
+        time = time[0]+':'+time[1];
+        date = date[0];
         listOfSessions = navigation.getParam('SessionsToSend', 'NO-ID');
         var type = navigation.getParam('type', 'NO-ID');
         var clientInfo = {
@@ -166,10 +218,27 @@ handleEdit(type,session){
             email: session.ClientEmail,
         };
         var buttonText;
+        var button = <Text>
+            
+            </Text>
         if(type == 'trainer'){
             buttonText = 'Email Client';
+            button = <View style ={{flexDirection: 'row'}}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('emailTrainer',{trainer: this.state.trainer,client:clientInfo,type: type})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>{buttonText}</Text></Text>
+            </View>
+             </TouchableOpacity>
+            </View>
         }else if(type == 'Client'){
             buttonText = 'Email Trainer';
+            button = <View style ={{flexDirection: 'row'}}>
+            <TouchableOpacity onPress ={() => this.props.navigation.navigate('emailTrainer',{trainer: this.state.trainer,client:clientInfo,type: type})}>
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>{buttonText}</Text></Text>
+            </View>
+             </TouchableOpacity>
+            </View>
         }
         
         return(
@@ -196,21 +265,31 @@ handleEdit(type,session){
             </View>
             
             <View >
-                <Text style={styles.infoLabel}> Date & Time: {session.Date}</Text>
+                <Text style={styles.infoLabel}> Date: {date}</Text>
+            </View>
+            <View >
+                <Text style={styles.infoLabel}> Time: {time}</Text>
             </View>
             
             <View >
                 <Text style={styles.infoLabel}> Workout: {session.Workout}</Text>
             </View>
             
-            <View style ={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress ={() => this.props.navigation.navigate('emailTrainer',{trainer: this.state.trainer,client:clientInfo,type: type})}>
+            {button}
+            <TouchableOpacity onPress ={() => this.complete(session)}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}><Text>{buttonText}</Text></Text>
+            <Text style={styles.buttonText}><Text>Mark as Complete</Text></Text>
             </View>
              </TouchableOpacity>
+            
+            <TouchableOpacity onPress ={() => Alert.alert(
+    'Cancel Session',
+    'Are you sure you want to cancel this session?',
+    [
+      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+      {text: 'OK', onPress: () => {this.cancelSess(session)}},
 
-            <TouchableOpacity onPress ={() => this.cancelSess(session)}>
+    ])}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>Cancel Session</Text></Text>
             </View>
@@ -224,7 +303,7 @@ handleEdit(type,session){
         
             </View>
             
-            </View>
+            
         );
     }
 }
@@ -254,18 +333,26 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
       //padding: 20
   },
-  button: {
-    backgroundColor: '#003b71',
-    width: 130,
-    height: 40,
-    //padding: 30,
-    borderRadius: 8,
-  },
   buttonText: {
-    alignSelf: 'center',
+    fontSize: 18,
     color: 'white',
-    fontWeight: 'bold',
-    padding: 10,
+    alignSelf: 'center'
+  },
+  button: {
+    height: 60,
+    width: 280,
+    backgroundColor: '#003b71',
+    borderColor: '#003b71',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   },
   title: {
     //color: 'white',

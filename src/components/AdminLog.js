@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
@@ -11,23 +11,40 @@ const Form = t.form.Form;
       Password: t.String,
     });
 
+var _ = require('lodash');
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet);
 
+stylesheet.textbox.normal.height = 50;
+stylesheet.textbox.normal.fontSize = 25;
+stylesheet.controlLabel.normal.fontSize = 20;
+stylesheet.textbox.error.height = 50;
+stylesheet.textbox.error.fontSize = 25;
+stylesheet.controlLabel.error.fontSize = 20;
 
 export default class AdminLogin extends React.Component {
-    
+    static navigationOptions = {
+    title: "Login Screen",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
          constructor(props) {
         super(props);
              this.state = {
                  type: ''
              }
          }
+
     
     options = {
+            stylesheet: stylesheet,
             auto: 'placeholders',
             fields: {
                 Netpass: {
                     label: 'Netpass Username', // <= label for the name field
-                    onSubmitEditing: () => this._form.getComponent('Password').refs.input.focus()
+                    onSubmitEditing: () => this._form.getComponent('Password').refs.input.focus(),
                 },
                 Password: {
                     label: 'Password',
@@ -36,13 +53,15 @@ export default class AdminLogin extends React.Component {
                 }
             }
         }
-    
 
     async _onClick(Ltype){
         console.log(Ltype);
         if(Ltype == 'Admin'){
         try{
             const finfo = this._form.getValue();
+            if(finfo == null){
+                Alert.alert("One or more fields are blank!")
+            }
             const uname = finfo.Netpass;
             const toSendStr = JSON.stringify({uname: uname});
             console.log(toSendStr);
@@ -83,6 +102,9 @@ export default class AdminLogin extends React.Component {
     }else if (Ltype == 'Trainer'){
         try{
             const finfo = this._form.getValue();
+            if(finfo == null){
+                Alert.alert("One or more fields are blank!")
+            }
             const uname = finfo.Netpass;
             const toSendStr = JSON.stringify({uname: uname});
             console.log(toSendStr);
@@ -123,6 +145,9 @@ export default class AdminLogin extends React.Component {
     }else if (Ltype == 'Client'){
         try{
             const finfo = this._form.getValue();
+            if(finfo == null){
+                Alert.alert("One or more fields are blank!")
+            }
             const uname = finfo.Netpass;
             const toSendStr = JSON.stringify({uname: uname});
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/ClientLogin.php',{
@@ -166,13 +191,14 @@ export default class AdminLogin extends React.Component {
     const Ltype = navigation.getParam('LogType', 'NO-ID');
 
     return (
-        <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
+        <View style={{alignItems: 'center',paddingTop: 150, backgroundColor: 'white', flex: 1 }}>
              
-            <View style={{width: 180}}>
+            <View style={{width: 300}}>
             <Form 
                     type={User} 
                     options = {this.options}
                     ref={c => this._form = c}
+                    
                 />
             </View>
             <TouchableOpacity onPress ={() => this._onClick(Ltype)}>
@@ -215,13 +241,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 50,
+    width: 300,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
-    borderWidth: 1,
+    //borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center'
+    //alignSelf: 'stretch',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   }
 });

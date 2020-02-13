@@ -1,17 +1,22 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, ScrollView, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
+
+
 export default class StartPage extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            LogType: ''
-        }
-         }
+    static navigationOptions = {
+    title: "Home",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
     
+   };
+
     render() {
 
         return (
@@ -23,19 +28,19 @@ export default class StartPage extends React.Component {
         
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin',{LogType:'Trainer'})}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}>Trainer</Text>
+            <Text style={styles.buttonText}>Trainer Login</Text>
             </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin',{LogType:'Client'})}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}>Client</Text>
+            <Text style={styles.buttonText}>Client Login</Text>
             </View>
             </TouchableOpacity>
             
             <TouchableOpacity onPress ={() => this.props.navigation.navigate('Admin', {LogType: 'Admin'})}>
             <View style = {styles.button}>
-            <Text style={styles.buttonText}>Admin</Text>
+            <Text style={styles.buttonText}>Admin Login</Text>
             </View>
             </TouchableOpacity>
 
@@ -69,11 +74,16 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: '#003b71',
     borderColor: 'white',
-    borderWidth: 5,
+    //borderWidth: 5,
     borderRadius: 50,
     marginBottom: 50,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 13},
       
   }
 });
