@@ -26,6 +26,9 @@ export default class AdminHome extends React.Component {
         }
     
          }
+/*
+Fetches all the trainers, clients, and admin accounts from database
+*/
     async componentDidMount() {
         try{
             clients = [];

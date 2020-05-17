@@ -53,6 +53,9 @@ export default class AdminLogin extends React.Component {
                 }
             }
         }
+/*
+Uses form values to first check if a user account exists then if password and username match what is in the database. Navigates to appropriate page (admin, trainer, or client) if login was successful. Display an alert if login wa sunsuccessful. Uses a different PhP file based on Ltpe. Ltype was captured on landing page. 
+*/
 
     async _onClick(Ltype){
         console.log(Ltype);
@@ -63,7 +66,8 @@ export default class AdminLogin extends React.Component {
                 Alert.alert("One or more fields are blank!")
             }
             const uname = finfo.Netpass;
-            const toSendStr = JSON.stringify({uname: uname});
+            const toSendStr1 = JSON.stringify({uname: uname});
+            const toSendStr = toSendStr1.toLowerCase();
             console.log(toSendStr);
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/AdminLogin.php',{
                 method: 'POST',
@@ -106,7 +110,9 @@ export default class AdminLogin extends React.Component {
                 Alert.alert("One or more fields are blank!")
             }
             const uname = finfo.Netpass;
-            const toSendStr = JSON.stringify({uname: uname});
+            const toSendStr1 = JSON.stringify({uname: uname});
+            const toSendStr = toSendStr1.toLowerCase();
+            console.log(toSendStr);
             console.log(toSendStr);
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/TrainerLogin.php',{
                 method: 'POST',
@@ -149,14 +155,16 @@ export default class AdminLogin extends React.Component {
                 Alert.alert("One or more fields are blank!")
             }
             const uname = finfo.Netpass;
-            const toSendStr = JSON.stringify({uname: uname});
+            const toSendStr1 = JSON.stringify({uname: uname});
+            //const toSendStr = toSendStr1.toLowerCase();
+           // console.log(toSendStr);
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/ClientLogin.php',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: toSendStr,
+                body: toSendStr1,
             });
             //console.log(response);
             let rJSON = await response.json();
@@ -213,7 +221,6 @@ export default class AdminLogin extends React.Component {
             </View>
             </TouchableOpacity>
 
-            
 
 
           </View>

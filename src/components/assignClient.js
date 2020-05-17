@@ -21,6 +21,9 @@ export default class assignClient extends React.Component {
         }
                    
     }
+    /*
+    Fetches all clients from the database and store them in an object array.
+    */
     async componentDidMount(){
         try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getClients.php',{
@@ -51,7 +54,9 @@ export default class assignClient extends React.Component {
             
         }
     }
-
+/*
+Adds a new row in the data table, ClientsToTrainers with the ID of the selected client and ID of the selected Trainer.Client was selected on the previous screen. Navigates to the previous screen after update is done.
+*/
 async onClick(trainer){
     console.log("selected",trainer);
     for (let i =0; i<this.state.clientsToDisplay.length; i++){

@@ -32,6 +32,9 @@ export default class TrainerHome extends React.Component {
              
         }
          }
+/*
+Fetches the data associated with the selected trainer. This includes clients and sessions.
+*/
      async componentDidMount() {
         const { navigation } = this.props;
         const netpass = navigation.getParam('inNetpass', 'NO-ID');

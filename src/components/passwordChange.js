@@ -42,6 +42,9 @@ export default class passwordChange extends React.Component {
                 
             }
     }
+/*
+Fetches user account of user selected on previous page
+*/
 async componentDidMount(){
         const { navigation } = this.props;
        const netpass = navigation.getParam('netpass', 'NO-ID');
@@ -66,6 +69,9 @@ async componentDidMount(){
         }
     }
 
+/*
+Updates row and column in Trainers or Clients table for selected trainer or client.
+*/
 async _onClick(info){
    
         var trainer = this.state.trainer;

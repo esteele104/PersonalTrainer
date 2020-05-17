@@ -4,6 +4,9 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Header } from 'react-native-elements';
+
 export default class ViewTrainers extends React.Component {
     static navigationOptions = {
     title: "My Sessions",
@@ -25,7 +28,49 @@ export default class ViewTrainers extends React.Component {
              trainerInfo: '',
          }
     }
-    
+
+/*
+Fetches all the data from the Sessions table matching the val parameter.
+*/
+async _search(val){
+    try{
+        var toSend = JSON.stringify(val);
+        var trainers2 = [];
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/filterSessions.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: toSend
+            });
+            //console.log("resp",response);
+            let rJSON = await response.json();
+            
+            this.setState({sessions: [], clientSes: []});
+            
+            for (let i =0; i<rJSON.length; i++){
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
+            }
+            for (let i =0; i<this.state.sessions.length; i++){
+                if(this.state.sessions[i].AssignedTo == netpass){
+        
+                    let a = this.state.clientSes.slice(); //creates the clone of the state
+                    a[i] = this.state.sessions[i];
+                    this.setState({clientSes: a});
+                }
+            }
+    }catch(error){
+            console.log(error);
+        
+}
+}
+
+/*
+Fetches all the data from the sessions table.
+*/
 async componentDidMount(){
     const { navigation } = this.props;
     netpass = navigation.getParam('inNetpass', 'NO-ID');
@@ -81,11 +126,24 @@ async componentDidMount(){
 
         
         return(
-            
-        
+            <View>
+            <Input
+                  containerStyle = {styles.viewHolder}
+                  placeholder='Search client or trainer name or netpass'
+                  onChangeText={(text) => this.setState({text}, () => this._search(this.state.text))}
+                  value={this.state.text}
+                  leftIcon={
+                    <Icon
+                      name='search'
+                      size={30}
+                      color='grey'
+                    />
+                  }
+                />
             <ScrollView style={styles.container}>
             {listItems}
             </ScrollView>
+            </View>
             
         );
     }

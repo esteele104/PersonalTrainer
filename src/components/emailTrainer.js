@@ -20,6 +20,9 @@ export default class emailTrainer extends React.Component {
         }
                    
     }
+    /*
+    Sends email to trainer or client based on type parameter
+    */
     _onSend(trainer,client,type){
         
         var to;

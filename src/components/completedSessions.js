@@ -25,6 +25,9 @@ export default class completedSessions extends React.Component {
         
     }
     
+/*
+Fecthes all the data from the Completed Sessions table and stores them in an array.
+*/
     async componentDidMount() {
     try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getCompletedSessions.php',{

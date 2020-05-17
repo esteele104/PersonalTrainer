@@ -6,6 +6,7 @@ import {SecureStore} from 'expo';
 
 
 
+
 export default class StartPage extends React.Component {
     static navigationOptions = {
     title: "Home",
@@ -20,8 +21,6 @@ export default class StartPage extends React.Component {
     render() {
 
         return (
-
-        
           <View style={{alignItems: 'center',justifyContent: 'center', backgroundColor: 'white', flex: 1 }}>
              
             <View style={{width: 180}}>
@@ -72,12 +71,13 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 80,
+    width: 300,
     backgroundColor: '#003b71',
     borderColor: 'white',
     //borderWidth: 5,
-    borderRadius: 50,
+    borderRadius: 30,
     marginBottom: 50,
-    alignSelf: 'stretch',
+    alignSelf: 'center',
     justifyContent: 'center',
     shadowColor: 'rgba(0, 0, 0, .30)',
     shadowOpacity: 0.9,

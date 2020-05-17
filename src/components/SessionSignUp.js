@@ -57,6 +57,9 @@ export default class SessionSignUp extends React.Component {
 
     }
     
+/*
+Fetches all the data from sessions table and store it in array.
+*/
     async componentDidMount(){
         
         
@@ -113,6 +116,9 @@ export default class SessionSignUp extends React.Component {
 
     }
         
+/*
+Adds a new row in Sessions table using form data and trainer information recieved from previos page.
+*/
             
     async _onClick(myInfo){
         

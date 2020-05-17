@@ -38,6 +38,9 @@ export default class TrainerAddition extends React.Component {
             }
         };
 
+/*
+Navigates to the confimation page while carrying over the form data.
+*/
     _onClick(){
         const finfo = this._form.getValue();
         this.props.navigation.navigate('ConfirmationPage', {inNetpass: inNetpass});

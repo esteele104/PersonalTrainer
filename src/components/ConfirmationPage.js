@@ -12,9 +12,15 @@ export default class ConfirmationPage extends React.Component {
         super(props);
     };
     
+    /*
+    Adds a new row to the Trainers table using form data from the previous screen. Navigate to Admin Home page on success.
+    */
      async _Submit(type,UserInfo){
          console.log(type);
-         const val = UserInfo;
+         const lNetpass = UserInfo.Netpass.toLowerCase();
+         const lEmail = UserInfo.Email.toLowerCase();
+         UserInfo.Netpass = lNetpass;
+         UserInfo.Email = lEmail;
          const toSend = UserInfo;
             const toSendStr = JSON.stringify(toSend);
             if(type == 'Trainer'){

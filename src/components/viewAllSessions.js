@@ -4,6 +4,9 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Header } from 'react-native-elements';
+
 export default class viewAllSessions extends React.Component {
     static navigationOptions = {
     title: "Scheduled Sessions",
@@ -22,6 +25,9 @@ export default class viewAllSessions extends React.Component {
         }
         
     }
+/*
+Fetches all the data from the Sessions table and stores them in an array.
+*/
     async refresh (){
         try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
@@ -45,6 +51,42 @@ export default class viewAllSessions extends React.Component {
             console.log(error);
         }
     }
+
+/*
+Fetches data from the Sessions table based on the val parameter.
+*/
+async _search(val){
+    try{
+        var toSend = JSON.stringify(val);
+        var trainers2 = [];
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/filterSessions.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: toSend
+            });
+            //console.log("resp",response);
+            let rJSON = await response.json();
+            
+            this.setState({sessions: []});
+            
+            for (let i =0; i<rJSON.length; i++){
+                let a = this.state.sessions.slice(); //creates the clone of the state
+                a[i] = rJSON[i];
+                this.setState({sessions: a});
+            }
+            console.log("sessions",this.state.sessions);
+    }catch(error){
+            console.log(error);
+        
+}
+}
+
+/*
+Fetches all the data from the Sessions table and stores them in an array.
+*/
     async componentDidMount() {
     try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getAllSession.php',{
@@ -81,10 +123,24 @@ export default class viewAllSessions extends React.Component {
             </TouchableOpacity>
                 );
         return(
-            
+            <View>
+            <Input
+                  containerStyle = {styles.viewHolder}
+                  placeholder='Search trainer name or netpass'
+                  onChangeText={(text) => this.setState({text}, () => this._search(this.state.text))}
+                  value={this.state.text}
+                  leftIcon={
+                    <Icon
+                      name='search'
+                      size={30}
+                      color='grey'
+                    />
+                  }
+                />
             <ScrollView style={styles.container}>
             {listItems}
             </ScrollView>
+            </View>
             
       
             
@@ -131,7 +187,7 @@ const styles = StyleSheet.create({
     viewHolder:
     {
         height: 55,
-        backgroundColor: '#26A69A',
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         margin: 4

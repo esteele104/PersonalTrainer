@@ -133,6 +133,9 @@ export default class TrainerAddition extends React.Component {
             }
         };
 
+/*
+Navigates to Confirmation Page while carrying over the form data.
+*/
     _onClick(type){
         const finfo = this._form.getValue();
         if(finfo){

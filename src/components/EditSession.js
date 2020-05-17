@@ -73,7 +73,9 @@ export default class EditSession extends React.Component {
         }
                 
    
-
+/*
+Pushes form data to sessions table.
+*/
 async _onClick(value){
     const finfo = this._form.getValue();
     if(finfo){

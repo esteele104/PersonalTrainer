@@ -4,6 +4,9 @@ import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Header } from 'react-native-elements';
+
 var clients= [];
 var toDisplay = [];
 var input = '';
@@ -33,6 +36,46 @@ export default class ViewClients extends React.Component {
         }
                    
     }
+
+/*
+Fetches all the data from the Clients table matching the val parameter.
+*/
+async _search(val){
+    try{
+        var info = {id: '',
+                str:val
+               }
+        var toSend = JSON.stringify(info);
+        var clients2 = [];
+            let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/filterClients.php',{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: toSend
+            });
+            //console.log("resp",response);
+            let rJSON = await response.json();
+            for (let i =0; i<rJSON.length; i++){
+                clients2.push(rJSON[i])
+            } 
+            this.setState({clientsToDisplay: []});
+            
+            for (let i =0; i<clients2.length; i++){
+                let a = this.state.clientsToDisplay.slice(); //creates the clone of the state
+                a[i] = clients2[i];
+                this.setState({clientsToDisplay: a});
+            }
+            console.log("clients",this.state.clientsToDisplay);
+    }catch(error){
+            console.log(error);
+        
+}
+}
+/*
+Fetches all the data from the Clients table and stores them in an array.
+*/
     async componentDidMount() {
         try{
             clients = [];
@@ -79,6 +122,19 @@ export default class ViewClients extends React.Component {
         return(
         
             <View style >
+            <Input
+                  containerStyle = {styles.viewHolder}
+                  placeholder='Search client name or netpass'
+                  onChangeText={(text) => this.setState({text}, () => this._search(this.state.text))}
+                  value={this.state.text}
+                  leftIcon={
+                    <Icon
+                      name='search'
+                      size={30}
+                      color='grey'
+                    />
+                  }
+                />
             
             <ScrollView style={styles.container}>
             
@@ -127,10 +183,10 @@ const styles = StyleSheet.create({
     viewHolder:
     {
         height: 55,
-        backgroundColor: '#26A69A',
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 4
+        //margin: 4
     },
  
     text:

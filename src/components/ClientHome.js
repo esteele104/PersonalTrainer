@@ -8,6 +8,15 @@ var clientToSend;
 var clients = [];
 
 export default class ClientHome extends React.Component {
+    static navigationOptions = {
+    title: "Client Home",
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+    }
+
     constructor(props) {
         super(props);
         
@@ -17,6 +26,9 @@ export default class ClientHome extends React.Component {
             selectedClient: [],
         }
          }
+/*
+Fetches data associated with the currently logged in client.
+*/
      async componentDidMount() {
           const { navigation } = this.props;
         const netpass = navigation.getParam('inNetpass', 'NO-ID');
@@ -113,13 +125,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   button: {
-    height: 36,
+    height: 60,
+    width: 280,
     backgroundColor: '#003b71',
     borderColor: '#003b71',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 20,
     alignSelf: 'stretch',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
   }
 });

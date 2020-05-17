@@ -21,6 +21,9 @@ export default class assignTrainer extends React.Component {
         }
                    
     }
+    /*
+    Fetches all the trainers from the database and store them in an array.
+    */
     async componentDidMount(){
         try{
             let response = await fetch('http://ic-research.eastus.cloudapp.azure.com/~esteele/getTrainer.php',{
@@ -52,6 +55,9 @@ export default class assignTrainer extends React.Component {
         }
     }
 
+    /*
+Adds a new row in the data table, ClientsToTrainers with the ID of the selected client and ID of the selected Trainer. Trainer was selected on the previous screen. Navigates to the previous screen after update is done.
+*/
 async onClick(client){
     console.log("selected",client);
     for (let i =0; i<this.state.trainersToDisplay.length; i++){

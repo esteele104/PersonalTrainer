@@ -1,8 +1,84 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView } from 'react-native';
+import { View, Text, Image, Alert, TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, ScrollView, TouchableHighlight } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Header } from 'react-native-elements';
+
+const styles = StyleSheet.create({
+  container: {
+    //justifyContent: 'center',
+    marginTop: 20,
+    //padding: 50,
+    width: 300,
+    height: 1000,
+    alignSelf: 'center'
+    //backgroundColor: '#ffffff',
+  },
+  title: {
+    fontSize: 30,
+    alignSelf: 'center',
+    marginTop: 10
+  },
+  buttonText: {
+    fontSize: 20,
+    color: 'white',
+    alignSelf: 'center'
+  },
+  button: {
+    height: 50,
+    backgroundColor: '#003b71',
+    borderColor: '#003b71',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+      shadowColor: 'rgba(0, 0, 0, .30)',
+    shadowOpacity: 0.9,
+    //elevation: 6,
+    shadowRadius: 3 ,
+    shadowOffset : { width: 1, height: 7},
+  },
+ 
+    viewHolder:
+    {
+        height: 55,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        //margin: 4
+    },
+ 
+    text:
+    {
+        color: 'white',
+        fontSize: 25,
+        alignSelf: 'center',
+        marginTop: 10,
+    },
+ 
+    btn:
+    {
+        right:10,
+        borderRadius: 60,
+       // width: 60,
+        height: 80,
+        
+        //backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 15
+    },
+ 
+    btnImage:
+    {
+        resizeMode: 'contain',
+        width: '100%',
+        tintColor: 'white'
+    }
+});
+
 
 
 var trainers= [];
@@ -14,14 +90,30 @@ var input = '';
 
 
 export default class ViewTrainers extends React.Component {
-    static navigationOptions = {
+    
+    static navigationOptions = ({ navigation }) => {
+    return {
     title: "Trainers",
      headerTitleStyle: {
             //fontWeight: '300',
             fontSize: 20,
             color: 'white'
           },
-    }
+        headerRight: (
+       <TouchableHighlight 
+            style={styles.btn}
+            onPress={() => navigation.navigate('AdminH')}>
+        <Icon
+          name='home'
+          size={40}
+          color='white'
+        />
+      </TouchableHighlight>
+        
+        
+    ),
+    };
+};
         constructor(props)
     {
         super();
@@ -35,7 +127,10 @@ export default class ViewTrainers extends React.Component {
             text: '',
         }
         }
-                   
+
+/*
+Fetches all the data from the Trainers table matching the val parameter.
+*/
 
 async _search(val){
     try{
@@ -69,6 +164,9 @@ async _search(val){
 }
     
    
+/*
+Fetches all the data from the Trainers table.
+*/
 async componentDidMount() {
     try{
             trainers = [];
@@ -132,7 +230,7 @@ async componentDidMount() {
         trainers = this.state.trainersToDisplay;
         const listItems = trainers.map((trainer,index) =>
         
-        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificTrainer',{selectedTrainer: trainer})} key={index}>
+        <TouchableOpacity onPress ={() => this.props.navigation.navigate('SpecificTrainer',{selectedTrainer: trainer, title: trainer.Firstname})} key={index}>
             <View style = {styles.button}>
             <Text style={styles.buttonText}><Text>{trainer.Firstname+" "+trainer.Lastname}</Text></Text>
             </View>
@@ -140,14 +238,20 @@ async componentDidMount() {
                 );
         return(
             <View>
+             <Input
+                  containerStyle = {styles.viewHolder}
+                  placeholder='Search trainer name or netpass'
+                  onChangeText={(text) => this.setState({text}, () => this._search(this.state.text))}
+                  value={this.state.text}
+                  leftIcon={
+                    <Icon
+                      name='search'
+                      size={30}
+                      color='grey'
+                    />
+                  }
+                />
             
-            
-            <TextInput  
-            style={{height: 40}}
-             placeholder="Type here to translate!"
-            onChangeText={(text) => this.setState({text}, () => this._search(this.state.text))}
-            value={this.state.text}
-            />
             <ScrollView style={styles.container}>
             {listItems}
             </ScrollView>
@@ -160,77 +264,3 @@ async componentDidMount() {
     }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    //justifyContent: 'center',
-    marginTop: 20,
-    //padding: 50,
-    width: 300,
-    height: 1000,
-    alignSelf: 'center'
-    //backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 30,
-    alignSelf: 'center',
-    marginTop: 10
-  },
-  buttonText: {
-    fontSize: 20,
-    color: 'white',
-    alignSelf: 'center'
-  },
-  button: {
-    height: 50,
-    backgroundColor: '#003b71',
-    borderColor: '#003b71',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 20,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-      shadowColor: 'rgba(0, 0, 0, .30)',
-    shadowOpacity: 0.9,
-    //elevation: 6,
-    shadowRadius: 3 ,
-    shadowOffset : { width: 1, height: 7},
-  },
- 
-    viewHolder:
-    {
-        height: 55,
-        backgroundColor: '#26A69A',
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 4
-    },
- 
-    text:
-    {
-        color: 'white',
-        fontSize: 25,
-        alignSelf: 'center',
-        marginTop: 10,
-    },
- 
-    btn:
-    {
-        position: 'absolute',
-        right: 25,
-        bottom: 25,
-        borderRadius: 30,
-        width: 60,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        padding: 15
-    },
- 
-    btnImage:
-    {
-        resizeMode: 'contain',
-        width: '100%',
-        tintColor: 'white'
-    }
-});

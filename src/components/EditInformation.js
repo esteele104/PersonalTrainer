@@ -112,6 +112,9 @@ export default class EditInformation extends React.Component {
             }
         };
 
+/*
+Retrives trainer and client information that was pushed from the previous page.
+*/
     async componentDidMount(){
         const { navigation } = this.props;
          var clientInfo = navigation.getParam('clientInfo', 'NO-ID');
@@ -127,6 +130,9 @@ export default class EditInformation extends React.Component {
         }
     }
 
+/*
+Checks if new form data is valid and pushes update to correct table based on type parameter.
+*/
 async _onClick(type){
     const finfo = this._form.getValue();
     if(finfo.PackageType === finfo.AdditionalPackage){

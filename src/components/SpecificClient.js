@@ -27,6 +27,9 @@ export default class SpecificClient extends React.Component {
             color: 'white'
           },
     }
+/*
+Fetches all the trainers associated with the selected client.
+*/
 async componentDidMount(){
     console.log("display", trainers);
     

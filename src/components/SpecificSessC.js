@@ -21,6 +21,9 @@ export default class SpecificSessC extends React.Component {
         }
                    
     }
+    /*
+    Fetches all the trainer data associated with the selected session.
+    */
      async componentDidMount(){
         const { navigation } = this.props;
        const session = navigation.getParam('selectedSess', 'NO-ID');

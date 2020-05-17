@@ -1,13 +1,38 @@
 import React from 'react';
-import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated } from 'react-native';
+import { View, Text, Image, Button, Alert,  TextInput, TouchableOpacity, Dimensions, Picker, StyleSheet, AsyncStorage, NetInfo,Animated, TouchableHighlight } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import t from 'tcomb-form-native';
 import {SecureStore} from 'expo';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Header } from 'react-native-elements';
 
 
 var trainerToDisplay;
 
 export default class SpecificTrainer extends React.Component {
+        static navigationOptions = ({ navigation }) => {
+    return {
+    title: "Current Trainer: "+navigation.getParam('title', 'defaultVaue'),
+     headerTitleStyle: {
+            //fontWeight: '300',
+            fontSize: 20,
+            color: 'white'
+          },
+        headerRight: (
+       <TouchableHighlight 
+            style={styles.btn}
+            onPress={() => navigation.navigate('AdminH')}>
+        <Icon
+          name='home'
+          size={40}
+          color='white'
+        />
+      </TouchableHighlight>
+        
+        
+    ),
+    };
+};
         constructor(props)
     {
         super();
@@ -17,6 +42,10 @@ export default class SpecificTrainer extends React.Component {
         }
                    
     }
+
+/*
+Remove the data associated with the selected trainer from the Trainers table
+*/
 async removeTrainer(){
     const { navigation } = this.props;
     const tInfo = navigation.getParam('selectedTrainer', 'NO-ID');
@@ -40,6 +69,10 @@ async removeTrainer(){
             console.log(error);
         }
 }
+
+/*
+Fetches all the clients assosicated with the seletced trainer and store them in an array.
+*/
 async componentDidMount(){
     console.log("display", clients);
     
@@ -137,6 +170,12 @@ async componentDidMount(){
             </View>
             </TouchableOpacity>
 
+            <TouchableOpacity >
+            <View style = {styles.button}>
+            <Text style={styles.buttonText}><Text>{trainer.Firstname}'s Sessions</Text></Text>
+            </View>
+            </TouchableOpacity>
+
             </View>
 
     
@@ -229,5 +268,16 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     flexDirection: 'row',
     //padding: 10
-  }
+  },
+    btn:
+    {
+        right:10,
+        borderRadius: 60,
+       // width: 60,
+        height: 80,
+        
+        //backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 15
+    },
+ 
 });
